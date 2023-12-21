@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Cropper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+		<!-- google fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Whisper&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Baskervville&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Cormorant&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Gruppo&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Beau+Rivage&display=swap" rel="stylesheet">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lobster&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+		<link href="https://fonts.googleapis.com/css2?family=Kalnia&display=swap" rel="stylesheet">
+		<!-- MathJax -->
+		<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../static/css/image_style.css" />
+    <link rel="stylesheet" href="../static/css/index.css">
+		<link rel="stylesheet" href="../static/css/decide.css">
+    <link rel="stylesheet" href="../static/css/page_loader.css">
+    <title>ZMC STUDENT ASSISTANT</title>
+    <style>
+    </style>
+</head>
+<body>
+		<div id="blur-div"></div>
+    <header>
+				<div class="token-label" style="display: none;">tokens</div>
+				<div class="tokens-counter" style="display: none;">0</div>
+				<div class="signin-status" style="display: none;">Sign-in</div>
+        <h2 class="h2-header">ZMC STUDENT ASSISTANT</h2>
+    </header>
+
+		<section class="decide-section" style="display: none;">
+			<div class="loading-box3" style="display: none; zIndex: 30;">
+				<div id="load-tmp-holder3">Just a moment, I'm working on it&nbsp;</div>
+				<div class="loading-dots3">
+					<span class="loading-dot3"></span>
+					<span class="loading-dot3"></span>
+					<span class="loading-dot3"></span>
+				</div>
+			</div>
+
+			<div class="image-box">
+				<img src="../static/images/generated_image3.png" alt="img">
+			</div>
+			<div class="choose-action-box">
+				<span class="chose-thread-label">Decide On The Ideal Thread</span>
+				<span class="new-thread">New Thread</span>
+				<span class="most-recent-thread">Recently Used</span>
+			</div>
+		</section>
+
+
+
+
+
+		<section class="generator-section" style="display: none;">
+        <div class="generator-container">
+					<div class="loading-box2" style="display: none;">
+						<div id="load-tmp-holder2" style="display: flex;">Just a moment, creating a new thread&nbsp;</div>
+						<div class="loading-dots2">
+							<span class="loading-dot2"></span>
+							<span class="loading-dot2"></span>
+							<span class="loading-dot2"></span>
+						</div>
+					</div>
+
+				<div id="fixed-div">
+					<!-- Threads selection section -->
+					<div id="request-new-thread">new thread</div>
+					<!-- font change -->
+					<div id="change-font-btn">font</div>
+					<div class="font-dropdown-box" style="display: none;">
+						<div class="font-dropdown">Roboto</div>
+						<div class="font-dropdown">Lobster</div>
+						<div class="font-dropdown">Open Sans</div>
+						<div class="font-dropdown">Poppins</div>
+						<div class="font-dropdown">Whisper</div>
+						<div class="font-dropdown">Beau Revage</div>
+						<div class="font-dropdown">Cinzel</div>
+						<div class="font-dropdown">Cormorant</div>
+						<div class="font-dropdown">Gruppo</div>
+						<div class="font-dropdown">Baskervville</div>
+					</div>
+
+
+					<div id="change-other-btn">other</div>
+					<div class="font-size-box" style="display: none;">
+						<div class="program-info-btn">program info</div>
+						<div class="font-size-box-btn">font size</div>
+						<div id="change-color-btn">text color</div>
+						<div id="change-background-btn">background</div>
+						<div class="user-styling-button">save my styles</div>
+					</div>
+
+
+					<div class="appearing-box">
+						<div class="font-counter">14</div>
+						<div class="incre-decre-box">
+							<div class="decrement">-</div>
+							<div class="increment">+</div>
+						</div>
+						<div class="okay">ok</div>
+					</div>
+
+
+					<!-- colour changer -->
+					<div class="color-dropdown-box">
+						<div class="color-dropdown" style="background-color: #F0F8FF;" data-color-code="#F0F8FF"></div>
+						<div class="color-dropdown" style="background-color: #FAEBD7;" data-color-code="#FAEBD7"></div>
+						<div class="color-dropdown" style="background-color: #00FFFF;" data-color-code="#00FFD4"></div>
+						<div class="color-dropdown" style="background-color: #7FFFD4;" data-color-code="#7FFFD4"></div>
+						<div class="color-dropdown" style="background-color: #8A2BE2;" data-color-code="#8A2BE2"></div>
+						<div class="color-dropdown" style="background-color: #FF7F50;" data-color-code="#FF7F50"></div>
+						<div class="color-dropdown" style="background-color: #6495ED;" data-color-code="#6495ED"></div>
+						<div class="color-dropdown" style="background-color: #B8860B;" data-color-code="#B8860B"></div>
+						<div class="color-dropdown" style="background-color: #A9A9A9;" data-color-code="#A9A9A9"></div>
+						<div class="color-dropdown" style="background-color: #BDB76B;" data-color-code="#BDB76B"></div>
+						<div class="color-dropdown" style="background-color: #FF8C00;" data-color-code="#FF8C00"></div>
+						<div class="color-dropdown" style="background-color: #8FBC8F;" data-color-code="#8FBC8F"></div>
+						<div class="color-dropdown" style="background-color: #00CED1;" data-color-code="#00CED1"></div>
+						<div class="color-dropdown" style="background-color: #FF1493;" data-color-code="#FF1493"></div>
+						<div class="color-dropdown" style="background-color: #FFD700;" data-color-code="#FFD700"></div>
+						<div class="color-dropdown" style="background-color: #FFB6C1;" data-color-code="#FFB6C1"></div>
+						<div class="color-dropdown" style="background-color: 20B2AA;" data-color-code="#20B2AA"></div>
+						<div class="color-dropdown" style="background-color: #00FA9A;" data-color-code="#00FA9A"></div>
+						<div class="color-dropdown" style="background-color: #DA70D6;" data-color-code="#DA70D6"></div>
+						<div class="color-dropdown" style="background-color: #40E0D0;" data-color-code="#40E0D0"></div>
+						<div class="color-dropdown" style="background-color: #9ACD32;" data-color-code="#9ACD32"></div>
+					</div>
+
+
+					<div class="background-dropdown-box">
+						<div class="background-dropdown" style="background-color: #253529;" data-background-code="#253529"></div>
+						<div class="background-dropdown" style="background-color: #3B3C36;" data-background-code="#3b3c36"></div>
+						<div class="background-dropdown" style="background-color: #414A4C;" data-background-code="#414a4c"></div>
+						<div class="background-dropdown" style="background-color: #232B2B;" data-background-code="#232b2b"></div>
+						<div class="background-dropdown" style="background-color: #123524;" data-background-code="#123524"></div>
+						<div class="background-dropdown" style="background-color: #1A2421;" data-background-code="#1a2421"></div>
+						<div class="background-dropdown" style="background-color: #000036;" data-background-code="#000036"></div>
+						<div class="background-dropdown" style="background-color: #000039;" data-background-code="#000039"></div>
+						<div class="background-dropdown" style="background-color: #253529;" data-background-code="#253529"></div>
+						<div class="background-dropdown" style="background-color: #100C08;" data-background-code="#100C08"></div>
+						<div class="background-dropdown" style="background-color: #080808;" data-background-code="#080808"></div>
+					</div>
+
+
+					<div id="thread-selector">threads</div>
+					<div class="thread-dropdown-box" style="display: none;">
+						<div class="thread-dropdown">1</div>
+						<div class="thread-dropdown">2</div>
+						<div class="thread-dropdown">3</div>
+					</div>
+				</div>
+
+					<div class="generator-prompt">
+						<!-- -->
+						<div class="loading-box">
+							<div id="load-tmp-holder" style="display: flex;">Just a moment, I'm working on it&nbsp;</div>
+							<div class="loading-dots">
+                <span class="loading-dot"></span>
+								<span class="loading-dot"></span>
+								<span class="loading-dot"></span>
+							</div>
+						</div>
+						<div class="text-area-box">
+							<textarea id="text-area" placeholder="Enter your query here"></textarea>
+						</div>
+						<div id="send-text-prompt-bx">
+							<div id="text-prompt-btn">send</div>
+						</div>
+
+						<div id="sep-or">OR</div>
+						<div class="wrapper">
+							<div class="container">
+                <div class="image-container">
+                  <img id="image" />
+                </div>
+								<div class="preview-container">
+									<img id="preview-image" />
+								</div>
+							</div>
+
+
+							<input type="file" id="file" accept="image/*" />
+							<label id="choose-a-photo" for="file">Choose A Photo</label>
+							<div class="option-wrapper" style="display: none;">
+								<div class="options hide">
+									<button class="aspect-ratio-button">16:9</button>
+									<button class="aspect-ratio-button">4:3</button>
+									<button class="aspect-ratio-button">1:1</button>
+									<button class="aspect-ratio-button">2:3</button>
+									<button class="aspect-ratio-button">Free</button>
+								</div>
+							</div>
+							<div class="btns">
+								<button id="preview" class="btnBtn hide">Preview</button>
+								<a href="/image_data" id="download" class="btnBtn hide">Use</a>
+							</div>
+						</div>
+						<!-- -->
+					</div>
+
+
+
+
+
+            <div class="star-container-main" style="display: none;">
+                <div class="cont-box">
+                    <div class="loading-container" id="loadingContainer">
+                        <div class="loading-spinner">
+                        </div>
+                    </div>
+                    <div class="star-container" id="starContainer">
+                        <div class="rotating-star"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="generator-box" style="display: block;">
+							<p>Welcome to <span style="color: lime;">ZMC Student Assistant!</span> I'm here to enhance your understanding of various subjects.</p><p>Proper use can lead to <span style="color: orange;">academic success</span>, but <span style="color: #FF0000;">misusing</span> me as a mere shortcut may hinder your career.</p><p>I encourage you to engage with the content I provide for <span style="color: lime;">optimal educational benefits</span>.</p><p>Feel free to ask questions on any subject, and I'll help you grasp the concepts. <span style="color: lime;">Use me wisely</span>, and I'll contribute to your educational journey positively.</p><p>Remember, success in your studies comes from active learning. <span style="color: orange;">Don't just seek quick answers</span>; take the time to comprehend the material.</p><p>Utilize me as a resource for <span style="color: lime;">clarification</span> and <span style="color: lime;">"deeper understanding</span> rather than a <span style="color: #FF0000;">shortcut for assignments</span>.</p><p>Your education is a valuable investment, and thoughtful use of this assistant can significantly impact your academic growth.</p><p>Happy learning!</p>
+
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p class="copyright" style="display: none;">&copy; 2023 ZMC Student Assistant</p>
+    </footer>
+    <script>
+			// Get the data threads sequence from the server
+			const threadsDataSequence = {{ threads | tojson | safe }};
+			const tokensCount = {{ tokens_count | tojson | safe }};
+			const decide = {{ decide | tojson | safe }};
+			const obj = {{ obj | tojson | safe }};
+			const userStyling = {{ user_styling | tojson | safe }};
+
+			let fontSize = 14;
+			let choiceColor;
+			let fontFamily = "Roboto";
+			let choiceBackground;
+
+			if (!decide) {
+			  const selectors = ['token-label', 'tokens-counter', 'signin-status', 'copyright',];
+				document.querySelector('.decide-section').style.display = 'none';
+				document.querySelector('.generator-section').style.display = 'block';
+				document.querySelector('.token-label').style.display = 'flex';
+				document.querySelector('.tokens-counter').style.display = 'flex';
+				document.querySelector('.signin-status').style.display = 'flex';
+				document.querySelector('header').style.boxShadow = 'none';
+
+			  for (const selector of selectors) {
+			      document.querySelector(`.${selector}`).style.display = 'flex';
+			  }
+
+				// Call the element innerHTMl loader
+				loadGeneratorElementData(obj);
+			}else {
+				document.querySelector('.decide-section').style.display = 'flex';
+				document.querySelector('header').style.boxShadow = '0px 15px 5px rgba(0, 0, 0, 0.9)';
+
+				// Call the element innerHTMl loader
+				loadGeneratorElementData(obj);
+			}
+
+			function loadGeneratorElementData(obj) {
+				if (obj && obj.success) {
+					const generatorBox = document.querySelector('.generator-box');
+					// Replace all occurrences of "&bksl;" with a backslash
+					const inputString = obj.response_text;
+					const outputString = inputString.replace(/&bksl;/g, "\\");
+					generatorBox.innerHTML = outputString;
+				}
+				if (userStyling) {
+					// Set values for the global variables
+					fontSize = userStyling.font_size;
+					fontFamily = userStyling.font_family;
+					choiceColor = userStyling.text_color;
+					choiceBackground = userStyling.background_color;
+
+					adjustToUserStyling(userStyling);
+				}
+			}
+
+
+			function adjustToUserStyling(obj) {
+				// Reset font styles
+				const elementsToStyle = ['p', 'ul', 'li', 'span', '.generator-box'];
+				elementsToStyle.forEach((selector) => {
+				  const elements = document.querySelectorAll(selector);
+				  elements.forEach((element) => {
+				    element.style.fontFamily = obj.font_family;
+				    element.style.fontSize = obj.font_size + "px";
+				    if (selector === 'p') {
+				      if (choiceColor) {
+				        element.style.color = obj.text_color;
+				      }
+						} else if (selector === '.generator-box') {
+							element.style.color = obj.text_color;
+							element.style.backgroundColor = obj.background_color;
+						}
+				  }); // <-- Add a closing parenthesis here
+				});
+			}
+
+			// Update tokens div element
+			const tokensCounter = document.querySelector('.tokens-counter');
+			if (tokensCounter) {
+				tokensCounter.textContent = tokensCount;
+				if (parseInt(data.tokens_count) <= 1000) {
+					tokensCounter.style.color = "#FF0000";
+				}
+			} else {
+				tokensCounter.textContent = 0;
+			}
+
+      // Trigger MathJax rendering
+      MathJax.typeset();
+    </script>
+    <script src="../static/js/image_script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Kalnia&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Gruppo&display=swap" rel="stylesheet">
+    <title>Student Information Form</title>
+    <style>
+        body {
+					height: 100vh;
+            font-family: Arial, sans-serif;
+						font-family: "Oswald";
+						display: flex;
+						align-items: flex-end;
+						flex-direction: column;
+						background-image: url("../static/images/theme.png");
+						background-repeat: no-repeat;
+						background-size: cover;
+						background-position: center;
+        }
+				.share-container {
+					width: 90%;
+					backdrop-filter: blur(10px);
+					border: .4px solid orange;
+					margin: 10px;
+					border-radius: 10px;
+					position: relative;
+				}
+
+				.share-cancel-btn {
+					width: 60px;
+					position: absolute;
+					top: 2px;
+					left: 5px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					height: 30px;
+					border: 1px solid #fff;
+					background-color: #ff0000;
+					border-radius: 5px;
+					color: #fff;
+					font-size: 14px;
+					font-family: sans-serif;
+					font-weight: bold;
+					opacity: .8;
+				}
+
+				.landing-buttons,
+				.share-wrapper-receive,
+				.share-wrapper-send {
+					width: 100%;
+					height: 480px;
+					padding: 10px;
+					padding-top: 20px;
+					border-bottom-left-radius: 10px;
+					border-bottom-right-radius: 10px;
+				}
+				.share-wrapper-receive {
+					height: auto;
+				}
+				* {
+					letter-spacing: .9px;
+					box-sizing: border-box;
+					color: #33ff00;
+					margin: 0;
+					padding: 0;
+				}
+				.landing-buttons {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					height: auto;
+				}
+
+				.share-content-button,
+				.get-content-button {
+					font-family: "Gruppo", sans-serif;
+					width: 170px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					height: 30px;
+					background-color: #00008B;
+					border: 1px solid #fff;
+					border-radius: 5px;
+					font-weight: bold;
+					color: #ffff;
+					margin: 5px 0;
+				}
+				.share-content-button {
+					margin-bottom: 2.5px;
+				}
+				.get-content-button {
+					margin-top: 2.5px;
+				}
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+						color: #33ff00;
+        }
+
+				#content-title {
+					width: 100%;
+					height: 30px;
+					padding: 0 10px;
+					color: #32174d;
+					background-color: #F5F5DC;
+					outline: none;
+					border: 1px solid orange;
+					border-radius: 10px;
+				}
+
+				#description,
+				#taggedEmails {
+					width: 100%;
+          box-sizing: border-box;
+          margin-bottom: 10px;
+					color: #32174d;
+					font-family: "Oswald";
+					height: 120px;
+					outline: none;
+					border: 1px solid orange;
+					border-radius: 10px;
+					padding: 10px;
+					background-color: #F5F5DC;
+				}
+
+				#description::placeholder,
+				#taggedEmails::placeholder,
+				#content-title::placeholder {
+					opacity: .4;
+					color: #2F4F4F;
+				}
+				.share-p {
+					font-size: 14px;
+				}
+				.confirm-share-box {
+					width: 100%;
+					height: auto;
+				}
+				.share-button {
+					width: 70px;
+					padding: 5px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					background-color: #00008B;
+					color: #fff;
+					border: 1px solid #fff;
+					font-weight: bold;
+					border-radius: 5px;
+					margin-top: 10px;
+				}
+
+
+				.share-wrapper-receive {
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					padding-top: 10px;
+				}
+				.receive-choice-box {
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+				}
+				.have-share-id,
+				.random-shared-threads {
+					width: 120px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					padding: 5px;
+					background-color: #00008B;
+					border: 1px solid #fff;
+					color: #fff;
+					border-radius: 5px;
+				}
+				.have-share-id {
+					margin-bottom: 5px;
+				}
+				.random-shared-threads {
+					margin-top: 5px;
+				}
+				.get-content {
+					width: 120px;
+					margin-top: 10px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					height: 30px;
+					border: 1px solid #fff;
+					border-radius: 5px;
+					color: #fff;
+					background: blue;
+				}
+				.random-ten-box {
+					width: 100%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					margin-top: 20px;
+				}
+				.random-ten-content {
+					width: 250px;
+					height: 30px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					color: #fff;
+					border: 1px solid #fff;
+					border-radius: 5px;
+					background-color: #00008B;
+					margin-bottom: 5px;
+					font-family: "Gruppo";
+					letter-spacing: .2px;
+					font-weight: bold;
+				}
+    </style>
+</head>
+<body>
+	<div class="share-container">
+		<span class="share-cancel-btn">Cancel</span>
+		<div class="landing-buttons">
+			<span class="share-content-button">Share Content</span>
+			<span class="get-content-button">Get Content</span>
+		</div>
+
+		<div class="share-wrapper-send">
+			<label class="share-label" for="content-title">Suitable Title (Max 20 characters):</label>
+	    <input type="text" id="content-title" maxlength="20" placeholder="Give your content a suitable title.">
+
+	    <label class="share-label" for="description">Description (Max 300 characters)</label>
+	    <textarea id="description" maxlength="300" placeholder="Share the motivation behind presenting this content to fellow students. Clearly convey the essence of the material, whether it's unraveling a complex algebraic equation or overcoming a challenging mathematical problem. Illuminate the significance of the content to foster understanding among your peers."></textarea>
+
+	    <label class="share-label" for="taggedEmails">Target Email Addresses (Optional)</label>
+	    <textarea id="taggedEmails" placeholder="Separate the addresses using spaces. This resource will trigger notifications for each recipient. It will also be available for other students to check as well."></textarea>
+
+	    <p class="share-p">Only the content of this thread will be shared.</p>
+			<div class="confirm-share-box">
+				<span class="share-button">Share</div>
+			</div>
+
+
+
+
+		<div class="share-wrapper-receive">
+			<div class="receive-choice-box">
+				<span class="have-share-id">Use Share Id</span>
+				<span class="random-shared-threads">Random Ten</span>
+			</div>
+			<div class="use-share-id-box" style="display: none;">
+				<label class="share-label" for="use-share-id">Share Id</label>
+				<input type="text" id="content-title" maxlength="6" placeholder="Enter the Share Id" required>
+				<span class="get-content">Get Content</span>
+			</div>
+			<div class="random-ten-box">
+				<span class="random-ten-content"></span>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+

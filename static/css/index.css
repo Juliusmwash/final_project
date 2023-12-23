@@ -66,11 +66,6 @@ header {
   color: #7DF9FF;
   z-index: 35;
 }
-/*
-<div class="tokens-counter">tokens</div>                                   <h2>ZMC STUDENT ASSISTANT</h2>                                             <div class="profile"></div>
-class="signin-status">Sign-in</div>
-<div class="token-label">tokens</div>                                      <div class="tokens-counter">20,000</div>                                   <div class="signin-status">Sign-in</div>
-*/
 
 .token-label {
   width: 50px;
@@ -126,6 +121,7 @@ section {
   border-radius: 10px;
   /*background-color: #E6E6FA;*/
   z-index: 5;
+  position: relative;
 }
 
 h2 {
@@ -133,10 +129,6 @@ h2 {
   font-size: 1.8rem;
   z-index: 30;
 }
-/*
-<div id="load-tmp-holder2" style="display: flex;">Just a moment, I'm working on it&nbsp;</div>
-              <div class="loading-dots2">
-*/
 
 .loading-box,
 .loading-box2,
@@ -347,6 +339,7 @@ label {
   /*border: 2px solid #800020;*/
   border-radius: 10px;
   background-color: var(--general-label-color);
+  color: black;
 }
 
 #send-text-prompt-bx {
@@ -514,7 +507,8 @@ label {
 #change-color-btn,
 #change-background-btn,
 .program-info-btn,
-.user-styling-button {
+.user-styling-button,
+.reveal-share-box-button {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -523,7 +517,7 @@ label {
   /*backdrop-filter: blur(5px);*/
   border-radius: 5px;
   border: 0.3px solid #FFF;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
   color: #fff;
   font-weight: bold;
   z-index: 30;

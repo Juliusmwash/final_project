@@ -171,6 +171,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (responseData.success) {
           //alert(`${responseData.response_text}`);
 
+          // Save thread_id
+          const threadIdHolder = getElementById('thread-id-holder');
+          threadIdHolder.textContent = data.get("thread_id");
+
           const generatorBox = document.querySelector('.generator-box');
           // Replace all occurrences of "&bksl;" with a backslash
 
@@ -197,48 +201,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 
-
-
-
-
-
-
-
-
-/*
-  function sendData(data) {
-    alert("called send");
-    // Call the loading function
-    devideLoadingFunc("activate");
-    const url = '/zmc_assistant_data';
-    const formData = new FormData();
-    formData.append('thread_choice', data.thread_choice)
-
-    fetch(url, {
-      method: 'POST',
-      headers: { 'File-Type': 'Text' },
-      body: formData,
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      alert("fetched");
-      return response.json();
-    })
-    .then(responseData => {
-      if (responseData.success) {
-        alert(`${responseData.response_text}`)
-      }
-    })
-    .catch(error => {
-      // Handle errors during the fetch operation
-      alert(error);
-      console.error('Error during fetch operation:', error);
-    });
-    devideLoadingFunc("deactivate");
-  }
-  */
 });
 
 /* END */
@@ -827,6 +789,12 @@ async function sendCroppedImage(imagePrompt = false, textPrompt = '', threadStat
 
     if (data.success) {
       const generatorBox = document.querySelector('.generator-box');
+      const threadIdHolder = document.getElementById('thread-id-holder');
+
+      // Save thread_id
+      if (data.hasOwnProperty('thread_id')) {
+        threadIdHolder.textContent = data.thread_id
+      }
 
       // Replace all occurrences of "&bksl;" with a backslash
       const inputString = data.response_text;
@@ -868,7 +836,7 @@ async function sendCroppedImage(imagePrompt = false, textPrompt = '', threadStat
 
     document.getElementById('blur-div').style.bottom = 0;
   } catch (error) {
-    alert(`Error = ${error}`);
+    alert(`Send Cropped Image Function Error = ${error}`);
     console.error('Error sending or processing cropped image:', error);
   }
 }

@@ -7,7 +7,7 @@ async def assistant_creator():
     print("assistant here")
     assistant = client.beta.assistants.create(
         name="ZMC STUDENT ASSISTANT",
-        instructions="""Ouput content in html format and use p tags only. Avoid using newline characters; use `<p>` tags instead. Even for a single line, enclose it within `<p>` tags.Assist on all queries.If equations are involved use latex syntax.If 'new thread' is issued as a prompt, reply with '<p>Thread created, how can I assist you?</p>'.""",
+        instructions="""Ouput content in html format and use p tags only. Avoid using newline characters; use `<p>` tags instead. Even for a single line, enclose it within `<p>` tags.Assist on all queries.If equations are involved use LaTeX syntax.If 'new thread' is issued as a prompt, reply with '<p>Thread created, how can I assist you?</p>'.""",
         model="gpt-3.5-turbo",
     )
     return assistant

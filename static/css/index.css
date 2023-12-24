@@ -412,6 +412,7 @@ label {
   padding-bottom: 10px;
   z-index: 30;
   background-color: #000435;
+  z-index: 90;
 }
 
 .generator-box {
@@ -500,7 +501,6 @@ label {
   left: 180px;
   left: 54.5%;
 }
-
 .thread-dropdown,
 .font-dropdown,
 .font-size-box-btn,
@@ -529,12 +529,35 @@ label {
 
 
 .background-dropdown-box.visible,
+.confirm-new-thread.visible,
 .appearing-box.visible,
 .color-dropdown-box.visible {
   transform: scaleX(1);
   opacity: 1;
 }
 
+.exit-color-dropdown,
+.exit-background-dropdown {
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  padding: 2px;
+  position: absolute;
+  bottom: -25px;
+  border-radius: 5px;
+  background-color: #FF0000;
+  border: .4px solid orange;
+  color: #FFF;
+}
+
+/*
+<div class="confirm-new-thread">                                             <span class="accept-label">Sure you want a new thread?</span>              <div class="confirm-new-thread-btns">                                        <span class="accept-btn">accept</span>                                     <span class="decline-btn">decline</span>                                 </div>                                                                   </div>
+*/
+
+
+
+.confirm-new-thread,
 .background-dropdown-box,
 .appearing-box,
 .color-dropdown-box {
@@ -543,9 +566,11 @@ label {
   backdrop-filter: blur(5px);
   background-color: transparent;
   position: absolute;
-  border-bottom-left-radius: 10px;
+  /*border-bottom-left-radius: 10px;*/
   border-bottom-right-radius: 10px;
   border: 0.2px solid #FFF;
+  border-left: 0;
+  border-top: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -558,6 +583,44 @@ label {
   transition: transform 0.3s ease-in-out, opacity 0.5s ease-in-out;
   z-index: 37;
 }
+.confirm-new-thread {
+  width: 250px;
+  padding-top: 10px;
+  border-bottom-left-radius: 0;
+  border-left: 0;
+}
+.accept-label {
+  font-size: 14px;
+  font-weight: bold;
+}
+.confirm-new-thread-btns {
+  width: 200px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+}
+
+.accept-btn,
+.decline-btn {
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  border-radius: 5px;
+  padding: 2px;
+  color: #FFF;
+  font-weight: bold;
+}
+.accept-btn {
+  background-color: #00AB66;
+  margin-right: 3px;
+}
+.decline-btn {
+  background-color: #FF0000;
+  margin-left: 3px;
+}
+
+
 .font-counter {
   width: 50px;
   height: 50px;

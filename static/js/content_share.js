@@ -12,6 +12,10 @@ shareCancelButton.addEventListener('click', () => {
   const receiveChoiceBox = document.querySelector('.receive-choice-box');
   const useShareIdBox = document.querySelector('.use-share-id-box');
   const shareLoadingBox = document.querySelector('.share-loading-box');
+  const parentElement = document.querySelector('.random-ten-box');
+
+  parentElement.innerHTML = '';
+  parentElement.style.display = 'none';
 
   //shareContainer.style.display = 'none';
   shareWrapperSend.style.display = 'none';
@@ -83,6 +87,12 @@ getContentBtn.addEventListener('click', async () => {
   setTimeout(() => {
     document.querySelector('.share-cancel-btn').click();
   }, 8000);
+});
+const getRandomTenBtn = document.querySelector('.random-shared-threads');
+getRandomTenBtn.addEventListener('click', async () => {
+  const receiveChoiceBox = document.querySelector('.receive-choice-box');
+  receiveChoiceBox.style.display = 'none';
+  await getSharedContent();
 });
 
 
@@ -189,57 +199,6 @@ async function showResponseToUser(success = true, message) {
 }
 
 
-
-
-
-
-
-
-
-
-/*
-@app.route('/get_shared_content', methods=["POST"])                   async def get_shared_content():
-    """                                                                   Receives the requests related to retrieval of the shared content.     Shared content will be extracted and sent to the student.
-    """
-                                                                          try:
-        shared_id = request.form.get('shared_id', None)
-
-        # Connect to the database                                             collection = openai_db["shared_content"]                                                                                                    # Retrieve shared content
-        if shared_id:
-            result = collection.find_one({"shared_id": shared_id})
-            if result:
-                return jsonify(
-                        {"success": True, "shared_content": result})
-
-            message = "Sorry, the shared content with that id was not
-found."
-            return jsonify({"success": False, "message": message})
-
-        # Count the number of documents in the collection                     document_count = collection.count_documents({})
-
-        # Set the desired number of random documents to retrieve
-        desired_count = min(document_count, 10)
-
-        # Use $sample to randomly select documents
-        random_documents = collection.aggregate([
-            { "$sample": { "size": desired_count } }
-            ])
-
-        # Retrieve titles from the extracted documents
-        list_objs = []
-        for doc in random_documents:
-            obj = {"shared_id": doc["shared_id"], "title": doc["title"
-]}
-            list_objs.append(obj)
-        return jsonify({"success": True, "list_objs": list_objs})
-                                                                          except Exception as e:
-        print(f"get_shared_content Error = {e}")                              return jsonify({"success": False, "message": e})
-*/
-
-
-
-
-
 // Make an HTTP Post request to the Flask API endpoint to fetch shared content
 async function getSharedContent(shareId = "") {
   try {
@@ -268,17 +227,28 @@ async function getSharedContent(shareId = "") {
       console.log('Content sharing set successfully');
       shareLoadingBox.style.display = "none";
 
-      const generatorBox = document.querySelector('.generator-box');
-      // Replace all occurrences of "&bksl;" with a backslash
-      const inputString = data.shared_content;
-      const outputString = inputString.replace(/&bksl;/g, "\\");
-      generatorBox.innerHTML = outputString;
+      if (data.used_shared_id) {
+        await changeGeneratorContent(data.shared_content);
+        //return true;
+      } else {
+        const arrayObjs = data.list_objs
+        const parentElement = document.querySelector('.random-ten-box');
 
-      // Trigger MathJax rendering
-      MathJax.typeset();
+        arrayObjs.forEach((obj) => {
+          // Call truncating function
+          const title = truncateFromCopyrightSymbol(obj.title);
+          const spanElement = document.createElement('span');
+          spanElement.textContent = title;
+          spanElement.setAttribute('data-shared-id', obj.shared_id);
+          spanElement.classList.add('random-ten-content');
+          parentElement.appendChild(spanElement);
+        });
 
-      // Set fonts
-      resetFontStyles();
+        parentElement.style.display = "flex";
+
+        // Add listeners to the newly created span elements
+        await addListenersToNewElements();
+      }
 
       //alert(`Shared content = ${data.shared_content}`);
       /*{"success": True, "shared_content": result,                            "message": message, "used_shared_id": True})*/
@@ -317,6 +287,48 @@ function resetFontStyles() {
           element.style.color = choiceColor;
         }
       }
+    });
+  });
+}
+
+function changeGeneratorContent(sharedContent) {
+  const generatorBox = document.querySelector('.generator-box');
+  // Replace all occurrences of "&bksl;" with a backslash
+  const outputString = sharedContent.replace(/&bksl;/g, "\\");
+  generatorBox.innerHTML = outputString;
+
+  // Trigger MathJax rendering
+  MathJax.typeset();
+
+  // Set fonts
+  resetFontStyles();
+}
+
+
+function truncateFromCopyrightSymbol(originalString) {
+  // Find the index of the copyright symbol
+  const indexOfCopyright = originalString.indexOf('©');
+
+  // Check if the copyright symbol is found
+  if (indexOfCopyright !== -1) {
+    // Truncate the string starting from the copyright symbol
+    const truncatedString = originalString.substring(0, indexOfCopyright);
+    return truncatedString
+  }
+  return originalString
+}
+
+
+// Add event listeners to newly created elements
+async function addListenersToNewElements() {
+  const newElements = document.querySelectorAll('.random-ten-content');
+  newElements.forEach((element) => {
+    element.addEventListener('click', async () => {
+      const sharedId = element.getAttribute('data-shared-id');
+      //const sharedId = element.dataset.shared-id;
+      await getSharedContent(sharedId);
+      // Reset the share box element
+      document.querySelector('.share-cancel-btn').click();
     });
   });
 }

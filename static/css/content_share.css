@@ -7,8 +7,13 @@
   backdrop-filter: blur(10px);
   background-color: #1c2841;/*#191970;*/
   border: 0.4px solid orange;
+  border-top: 0;
+  border-right: 0;
   margin: 10px;
   border-radius: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
   position: absolute;
   top: 100px;
   right: -6px;
@@ -39,7 +44,7 @@
   background-color: #ff0000;
   border-radius: 5px;
   color: #fff;
-  font-size: 14px;
+  font-size: 12px;
   font-family: sans-serif;
   font-weight: bold;
   opacity: 0.8;
@@ -335,7 +340,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .random-ten-content {

@@ -10,7 +10,6 @@ const imgCont = document.querySelector('.image-container');
 const choosePhoto = document.getElementById('choose-a-photo');
 const sendPromptBtn = document.getElementById('text-prompt-btn');
 const textArea = document.getElementById('text-area');
-const NewThreadBtn = document.getElementById('request-new-thread');
 const changeFontBtn = document.getElementById('change-font-btn');
 const fontDrodownBox = document.querySelector('.font-dropdown-box')
 const okay = document.querySelector('.okay');
@@ -32,7 +31,7 @@ let fontFamily = "Roboto";
 let choiceColor;
 */
 
-
+//<div class="exit-font-dropdown">Exit</div>
 
 /* USER PREFERED STYLING */
 
@@ -219,6 +218,7 @@ const backgroundDropdownBox = document.querySelector('.background-dropdown-box')
 const backgroundDropdownAll = document.querySelectorAll('.background-dropdown');
 
 changeBackgroundBtn.addEventListener('click', () => {
+  document.querySelector('.background-dropdown-box').style.display = 'flex';
   showBox3();
   document.querySelector('.font-size-box').style.display = 'none';
 });
@@ -250,6 +250,7 @@ function hideBox3() {
 
 const changeColorBtn = document.getElementById('change-color-btn');
 changeColorBtn.addEventListener('click', () => {
+  document.querySelector('.color-dropdown-box').style.display = 'flex';
   showBox2();
   document.querySelector('.font-size-box').style.display = 'none';
 });
@@ -276,7 +277,14 @@ colorDropdownAll.forEach((element) => {
     });
   });
 });
-
+const exitColorDropdown = document.querySelector('.exit-color-dropdown');
+const exitBackgroundDropdown = document.querySelector('.exit-background-dropdown');
+exitColorDropdown.addEventListener('click', () => {
+  document.querySelector('.color-dropdown-box').style.display = 'none';
+});
+exitBackgroundDropdown.addEventListener('click', () => {
+  document.querySelector('.background-dropdown-box').style.display = 'none';
+});
 
 
 
@@ -486,7 +494,33 @@ function changeFontFamily(font_family) {
 })();
 
 
-NewThreadBtn.addEventListener('click', async () => {
+
+
+
+/*
+<div class="confirm-new-thread">                                             <span class="accept-label">Sure you want a new thread?</span>              <div class="confirm-new-thread-btns">                                        <span class="accept-btn">Yes</span>                                        <span class="decline-btn">No</span>                                      </div>                                                                   </div>
+*/
+
+
+function newThreadShow() {
+  const confirmNewThread = document.querySelector('.confirm-new-thread');
+  confirmNewThread.classList.add('visible');
+}
+function newThreadHide() {
+  const confirmNewThread = document.querySelector('.confirm-new-thread');
+  confirmNewThread.classList.remove('visible');
+}
+
+
+const NewThreadBtn = document.getElementById('request-new-thread');
+const acceptBtn = document.querySelector('.accept-btn');
+const declineBtn = document.querySelector('.decline-btn');
+
+NewThreadBtn.addEventListener('click', () => {
+  newThreadShow();
+});
+acceptBtn.addEventListener('click', async () => {
+  newThreadHide();
   if (newThreadController) {
     newThreadController = false;
     const loadingBox = document.querySelector('.loading-box2');
@@ -496,6 +530,9 @@ NewThreadBtn.addEventListener('click', async () => {
     newThreadController = true;
     loadingBox.style.display = "none";
   }
+});
+declineBtn.addEventListener('click', async () => {
+  newThreadHide();
 });
 
 function buttonColor(element, color = "green") {

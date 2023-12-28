@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Page</title>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/verify_details/verify-details.css') }}">
+		<!-- <link rel="stylesheet" type="text/css" href="../static/css/verify_details/verify-details.css"> -->
+<style>
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header-box">
+            <div class="image-box" style="display: none;">
+                <img src="" alt="logo">
+            </div>
+            <h1>ZMC VERIFICATION</h1>
+            <p>Enter the 4 digits code that we have sent through your email</p>
+        </header>
+        <div class="input-timer-box">
+            <div class="input-partition">
+              <input type="text" class="digit-input" id="digit1" maxlength="4" pattern="[0-9]" size="1" placeholder="X">
+              <input type="text" class="digit-input" id="digit2" maxlength="1" pattern="[0-9]" size="1" placeholder="X">
+              <input type="text" class="digit-input" id="digit3" maxlength="1" pattern="[0-9]" size="1" placeholder="X">
+              <input type="text" class="digit-input" id="digit4" maxlength="1" pattern="[0-9]" size="1" placeholder="X">
+							<form action="/verify_password_reset" method="POST" id="my-form" autocomplete="off">
+                  <input type="hidden" id="submission" name='reset_code'>
+              </form>
+            </div>
+            <div class="error-box" style="display: none">Verification Code Invalid</div>
+
+						<div class="timer-logic-box">
+							<div class="icon-time-box">
+								<ion-icon name="timer-outline" id="icon"></ion-icon>
+								<p id="timer"><span id="time-min">00</span>:<span id="time-sec">00</span></p>
+							</div>
+							<button type="submit" id="verify-button">Verify</button>
+							<button type="submit" id="new-code-button" style="display: none;">Request New Code</button>
+						</div>
+            <div class="message-box" style="display: none;">
+						  <div class="successful-reg-message" style="display: flex;">Registration Successful</div>
+            </div>
+        </div>
+    </div>
+		<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+		<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+		<!-- <script src="../static/js/verify_details/shared-variables.js"></script>
+		<script src="../static/js/verify_details/new-verification-code-request.js"></script>
+		<script src="static/js/verify_details/styled_verify-details_v2.js"></script> -->
+
+		<script src="../static/js/verify_details/verify_combine.js"></script>
+		<script src="{{ url_for('static', filename='js/verify_details/timer-logics_v2.js') }}"></script>
+</body>
+
+</html>
+

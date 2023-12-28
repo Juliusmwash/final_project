@@ -372,7 +372,7 @@ def login():
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password):
         # Login the user using Flask-Login
-        login_user(user, remember_me)
+        login_user(user, remember=remember_me)
         return redirect(url_for('index_endpoint'))
 
     # If the credentials are incorrect, show the error message
@@ -391,11 +391,11 @@ def logout():
 
 @app.route("/reset_password_process", methods=["POST"])
 async def reset_password_process():
+    print("reset password called")
     email = request.form.get("email", None)
-    request_method = request.form.get("request_method")
-    confirm_code = request.form.get("reset_code")
 
-    if email and request_method and request_method == "get_reset_code":
+    if email:
+        email = email.lower()
         # Check if the user exists in the database
         collection = openai_db["user_account"]
         result = collection.find_one({"email": email})
@@ -420,43 +420,60 @@ async def reset_password_process():
             }
 
         result = collection.insert_one(obj)
-        if result and result.inserted_id > 0:
+        if result and result.inserted_id:
+            print(f"inserted_id = {result.inserted_id}")
             # Send reset code to the client
             #result2 = send_verification_email(email, reset_code)
             #if result2:
-            return render_template('verify-details.html', key_code=2)
+            return render_template('verify_reset_code.html', key_code=2)
 
         # An error Occured
         message = "Sorry, An error ocurred while sending the reset code."
         return render_template("access.html", message=message)
 
-    if request_method and request_method == "confirm_reset_code":
-        # Check if the provided reset code match with the one in the database.
-        obj = await confirm_reset_code()
 
-        if obj["success"]:
-            return render_template("/change_password.html")
-        else:
-            return render_template("/access.html", message=obj["error"])
+@app.route("/verify_password_reset", methods=["POST"])
+async def verify_password_reset():
+    reset_code = request.form.get("reset_code", None)
+    # Check if the provided reset code match with the one in the database.
+    if reset_code:
+        try:
+            reset_code = int(reset_code)
+        except Exception as e:
+            message = "Only numbers allowed as the reset code"
+            return render_template("access.html", message=message)
+
+    obj = await confirm_reset_code(reset_code)
+    print(f"obj = {str(obj)}")
+
+    if obj["success"]:
+        print("success true")
+        return render_template("change_password.html")
+    else:
+        print("success false")
+        return render_template("access.html", message=obj["error"])
 
 
-async def confirm_reset_code():
+async def confirm_reset_code(reset_code):
+    print("confirm reset code called")
     # Variable to keep track of any arising error.
     error = ""
+    success = False
 
     try:
         # Get the reset code saved earlier in the database
         collection = openai_db["key_integrity_check"]
-        reset_data = collection.find_one({"email": session["email"]})
+        email = session["email"]
+        reset_data = collection.find_one({"email": email})
         if reset_data:
-            if int(confirm_code) == reset_data["reset_code"] :
+            if reset_code == reset_data["reset_code"] :
                 obj = {
                     "verified": True
                     }
                 result = collection.update_one({"email": session["email"]}, {"$set": obj})
                 if result and result.modified_count > 0:
-                    return {"success": True}
-                    return render_template("/change_password.html")
+                    print("Reset code process success")
+                    success = True
                 else:
                     error = "Reset code verified status update failed."
             else:
@@ -467,22 +484,24 @@ async def confirm_reset_code():
     except Exception as e:
         error = e
     finally:
+        if success:
+            return {"success": True}
         return {"success": False, "error": error}
 
     
 
 # Recovery route
-@app.route('/reset_password_data', methods=['POST'])
+@app.route('/finalise_password_change', methods=['POST'])
 def reset_password_data():
     # Get the username and password from the form data
-    email = request.form.get('email', None)
-    new_password = request.form.get("password")
+    new_password = request.form.get("new_password")
 
-    if not email or not new_password:
-        message = "Please provide email as well as the new password; reset failed."
+    if not new_password:
+        message = "Please provide a reset password; reset failed."
         return render_template("access.html", message=message)
 
     # Query the user details from your database
+    email = session["email"]
     user = get_user_from_db(email)
 
     # Check reset code verification status before proceeding

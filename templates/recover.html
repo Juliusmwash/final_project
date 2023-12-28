@@ -5,77 +5,47 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title> RECOVER </title>
-		<link rel="stylesheet" href="{{ url_for('static', filename='css/recover.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/recover_password/recover.css') }}">
 	</head>
 	<body>
 		<section class="section-brightnessd">
 		<div class="recover-box">
-      <form action="/recover" method="POST" enctype="application/x-www-form-urlencoded">
+      <form action="/reset_password_process" method="POST" enctype="application/x-www-form-urlencoded">
 				<h2>Recover</h2>
 				<div class="input-box">
 					<span class="icon">
 						<ion-icon name="mail"></ion-icon>
 					</span>
-					<input type="text" name="username" class="input-data" required>
-					<input type="hidden" name="category" class="input-data" value="601">
-          <div class="error-box" style="display: none;">username or password incorrect</div>
+					<input type="text" name="email" class="input-data" required>
+					<!--<div class="error-box" style="display: none;">username or password incorrect</div>-->
 					<label>Enter Your Email Address</label>
 				</div>
-        {% if next_url %}
-          <input type="hidden" name="next" value="{{ request.args.get('next') }}">
-        {% endif %}
 				<button type="submit">Send</button>
 			</form>
-
-
-
-
-			<!--<div class="recover-password-btn" href="/recover"> Forgot Password?
-				<form style="display: none;" action="/recover" method="POST" id="recover-form">
-					<input type="hidden" value="601" name="category" id="recover-password">
-				</form>
-			</div> -->
-			<!--<a class="recover-password-btn" href="/recover"> Forgot Password?</a>-->
-
-
-
-
-
 		</div>
 		</section>
 		<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 		<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-		<!--<script>
-        // Get references to the button and form elements
-        const recoverButton = document.querySelector('.recover-password-btn');
-        const recoverForm = document.getElementById('recover-form');
+		<script>
+			/*
+		  const status_msg = "{{ status }}";
+		  document.addEventListener("DOMContentLoaded", function () {
+		    const errorDiv = document.querySelector('.error-box');
+		    const inputData = document.querySelectorAll('.input-data');
 
-        // Attach a click event listener to the button
-        recoverButton.addEventListener('click', function(event) {
-            // Submit the form programmatically
-            recoverForm.submit();
-        });
-		</script>-->
-<script>
-  const status_msg = "{{ status }}";
-  document.addEventListener("DOMContentLoaded", function () {
-    const errorDiv = document.querySelector('.error-box');
-    const inputData = document.querySelectorAll('.input-data');
-
-    if (status_msg === "error") {
-      // Display the error message and focus on the first input field
-      errorDiv.style.display = "block";
-      // Clear the values of all input fields and hide the error message when the user starts typing
-      inputData.forEach(function (input) {
-        input.value = "";
-        input.addEventListener('input', function () {
-          errorDiv.style.display = "none";
-        });
-      });
-    }
-  });
-</script>
-
-   <!-- <script src="{{ url_for('static', filename='js/login.js') }}"></script>-->
+				if (status_msg === "error") {
+					// Display the error message and focus on the first input field
+					errorDiv.style.display = "block";
+					// Clear the values of all input fields and hide the error message when the user starts typing
+					inputData.forEach(function (input) {
+						input.value = "";
+						input.addEventListener('input', function () {
+							errorDiv.style.display = "none";
+						});
+					});
+				}
+			});
+			*/
+		</script>
 	</body>
 <html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="../static/css/access.css">
+    <title>Authentication Required</title>
+    <style>
+    </style>
+</head>
+<body>
+	<header>
+		<h1 class="logo">ZMC Student Assistant</h1>
+	</header> 
+	<div class="access-container">
+		<div class="message-container">
+			<div class="message-box" style="display: none;">This is the message box This is the message box This is the message box This is the message box This is the message box</div>
+		</div>
+    <h1>Authentication Required</h1>
+    <p>Please log in to access this page.</p>
+		<div class="buttons-box">
+	    <a href="/login_template" class="button">Log In</a>
+	    <a href="/register_template" class="button" style="margin-left: 10px;">Sign Up</a>
+		</div>
+	</div>
+	<script>
+		const message = {{ message | tojson | safe }}
+		if (message) {
+			const messageBox = document.querySelector('.message-box');
+			messageBox.innerHTML = '';
+			messageBox.innerHTML = message;
+			messageBox.style.display = 'flex';
+			setTimeout(() => {
+				messageBox.style.display = 'none';
+			}, 10000);
+		}
+	</script>
+</body>
+</html>
+

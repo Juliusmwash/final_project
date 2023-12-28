@@ -1,0 +1,188 @@
+/* Apply styles to the div elements */
+* {
+    /* font-size: 14px; */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: white;
+}
+
+:root {
+    --h1-font-size: 18px;
+    --p-font-size: 12px;
+    --input-width: 40px;
+    --input-height: 70px;
+    --time-font-size: 20px;
+    --icon-dimensions: 20px;
+    --button-colour: #4184f0;
+    --button-font-size: 18px;
+}
+
+body {
+    background: red;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #590f8a;/*#3498db;*/ /* Example background color */
+    font-size: 18px;
+}
+
+.header-box {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 10px;
+}
+
+.header-box h1 {
+    width: 300px;
+    height: 50px;
+    display: flex;
+    text-align: left;
+    align-items: center;
+    font-size: var(--h1-font-size);
+    padding-top: 10px;
+}
+
+.header-box p {
+    text-align: left;
+    font-size: var(--p-font-size);
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+
+.input-timer-box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    align-self: center;
+    background-color: #050d36;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+}
+
+.input-partition {
+    width: 100%;
+    display: flex;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.input-partition input {
+    width: var(--input-width);
+    height: var(--input-height);
+    border-radius: 10px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #3498db;
+    font-weight: bold;
+    outline: none;
+    color: hotpink;
+    margin-top: 20px;
+    margin-right: 8px;
+}
+
+.error-box {
+    color: red;
+    font-size: var(--p-font-size);
+    padding: 20px 0;
+}
+
+.timer-logic-box {
+  width: 100%;
+  margin-top: 200px;
+  position:relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-time-box {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-time-box #icon {
+  width: var(--icon-dimensions);
+  height: var(--icon-dimensions);
+  margin-right: 10px;
+  color: #1bc9cf;
+}
+
+.icon-time-box #timer {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  font-size: var(--time-font-size);
+  align-items: center;
+  color: #a51bcf;
+}
+
+/*.input-timer-box p {
+  text-align: left;
+  color: orange;
+}*/
+
+#time-min,
+#time-sec {
+  color: #1bc9cf;;
+}
+
+#verify-button,
+#new-code-button {
+  width: 150px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--button-colour);
+  font-size: var(--button-font-size);
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+}
+
+#new-code-button {
+  width: 200px;
+}
+
+.message-box {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.successful-reg-message {
+  width: 70%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  background-color: #1aa115;
+  border-radius: 15px;
+  position: absolute;
+  top: 20px;
+  bottom: 30px;
+}

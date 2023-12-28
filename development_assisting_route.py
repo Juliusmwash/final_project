@@ -18,7 +18,7 @@ def wipe_databases():
         # Invoke db_collections_check()
         if db_collections_check():
             # Create a new testing account
-            configure_user_account()
+            #configure_user_account()
 
             return jsonify({"message": "wipe success"})
         return jsonify({"message": "wipe failed"})

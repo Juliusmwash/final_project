@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title> LOGIN </title>
+		<!--<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">-->
+		<link rel="stylesheet" href="../static/css/register.css">
+	</head>
+	<body>
+		<section>
+    <div id="animation-cover">
+		<div class="login-box">
+      <form action="/register" method="POST" enctype="application/x-www-form-urlencoded">
+				<div class="input-box" id="email-box">
+					<span class="icon">
+						<ion-icon name="mail"></ion-icon>
+					</span>
+					<input type="email" class="input-data" name="email" autocomplete="off" autocomplete="off" required>
+					<label class="input-label">Email<span class="aste">*</span></label>
+					<div id="email-error" style="display: none;">Email already in use</div>
+				</div>
+
+
+
+
+        <!-- <div class="input-box" id="mobile-number-box">                          <span class="icon">
+            <ion-icon name="call"></ion-icon>
+          </span>
+          <input type="tel" class="input-data" name="mobile-number" id="phone-number" autocomplete="off" required>
+          <span id="phone-num-error" style="display: none;">Please enter a valid phone number</span>
+          <label class="input-label">Phone Number<span class="aste">*</span></label>
+				</div> -->
+
+
+
+
+				<div class="input-box" id="password-box">
+					<span class="eye-icon show_password" id="show-pwd">
+						<ion-icon name="eye-off-outline" id="eye-off1"></ion-icon>
+						<ion-icon name="eye-outline" style="display: none;i" id="eye-on1"></ion-icon>
+					</span>
+					<span class="icon">
+						<ion-icon name="lock-closed"></ion-icon>
+					</span>
+
+					<input type="password" class="input-data" name="password" id="password" autocomplete="off" required>
+					<label class="input-label" id="label-password">
+						Password
+						<span class="aste">*</span>
+					</label>
+
+          <span id="password-strength" style="display: none;"></span>
+					<div id="password-length-error" style="display: none;">Password too small</div>
+				</div>
+
+
+
+
+
+
+
+				<div class="input-box" id="confirm-password-box">
+					<span class="eye-icon show_password" id="show-pwd">
+						<ion-icon name="eye-off-outline" id="eye-off2"></ion-icon>
+						<ion-icon name="eye-outline" style="display: none;" id="eye-on2"></ion-icon>
+					</span>
+          <span class="icon">
+            <ion-icon name="lock-closed"></ion-icon>
+          </span>
+
+          <input type="password" class="input-data" name="confirm-password" id="confirm-password" autocomplete="off" required>
+          <label class="input-label"id="label-confirm-password">
+						Confirm Password
+						<span class="aste">*</span>
+					</label>
+
+          <div id="password-error" style="display: none;">Passwords mismatched. Please re-enter</div>
+        </div>
+
+
+
+
+				<div class="input-box">
+          <input type="text" class="input-data" name="first-name" required>
+          <label class="input-label">First Name<span class="aste">*</span></label>
+        </div>
+
+
+
+
+				<div class="input-box">
+          <input type="text" class="input-data" name="second-name" required>
+          <label class="input-label">Second Name<span class="aste">*</span></label>
+        </div>
+
+        <input type="hidden" name="next" value="{{ request.args.get('next') }}">
+
+				<button type="submit">Sign up</button>
+			</form>
+		</div>
+    </div>
+		</section>
+		<script>
+			const message_data = "{{ message }}";
+			if (message_data === 'emailUsed') {
+				document.getElementById('email-error').style.display = 'flex';
+			}
+			if (message_data === 'mobileNumberUsed') {
+				const phoneErrorDiv = document.getElementById('phone-num-error');
+				phoneErrorDiv.textContent = 'Phone number already in use';
+				phoneErrorDiv.style.display = 'flex';
+			}
+		</script>
+		<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+		<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+		<script src="{{ url_for('static', filename='js/phone_number_validation.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/password-strength.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/password_visibility.js') }}"></script>
+
+
+		<script>
+			// Get references to the button and form elements
+			const inputElements = document.querySelectorAll('.input-data');
+			const inputLabels = document.querySelectorAll('.input-label');
+			const passInput1 = document.getElementById('password');
+			const passInput2 = document.getElementById('confirm-password');
+			const labelElement = document.getElementById('input-label2');
+
+			// Find the span element by its ID
+			const spanElements = document.querySelectorAll('.show_password');
+			const eyeOn1 = document.getElementById('eye-on1');
+			const eyeOn2 = document.getElementById('eye-on2');
+			const eyeOff1 = document.getElementById('eye-off1');
+			const eyeOff2 = document.getElementById('eye-off2');
+
+			function visibility(element1, element2, passInput) {
+				// Change its innerHTML
+				element1.style.display = element1.style.display === 'none' ? 'block' : 'none';
+				element2.style.display = element2.style.display === 'none' ? 'block' : 'none';
+				if (element2.style.display === 'block') {
+					passInput.type = 'text';
+				} else {
+					passInput.type = 'password';
+				}
+				inputElements[index].focus();
+			}
+
+			// Set event Listener for the password visibility
+			spanElements.forEach((spanElement, index) => {
+				spanElement.addEventListener('click', () => {
+					if (index === 0) {
+						visibility(eyeOff1, eyeOn1, passInput1);
+					} else if (index === 1) {
+						visibility(eyeOff2, eyeOn2, passInput2);
+					}
+				});
+			});
+
+			// Take focus to the first input element
+			inputElements[0].focus();
+			inputLabels[0].style.top = '-8px';
+
+			inputElements.forEach((element, index) => {
+				element.addEventListener('focus', () => {
+					element.style.backgroundColor = 'transparent';
+					inputLabels[index].style.top = '-8px';
+					if (index === 1) {
+            //spanElement.style.top = '-8px';
+					}
+				});
+			});
+
+			inputElements.forEach((element, index) => {
+				element.addEventListener('blur', () => {
+					if (element.value === '') {
+            inputLabels[index].style.top = '';
+					}
+				});
+			});
+
+		</script>
+
+
+		<script src="../static/js/register/phone_number_validation.js"></script>
+		<script src="../static/js/register/password-strength.js"></script>
+		<script src="../static/js/register/password_visibility.js"></script>
+	</body>
+<html>

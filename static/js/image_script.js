@@ -171,8 +171,11 @@ document.addEventListener('DOMContentLoaded', function () {
           //alert(`${responseData.response_text}`);
 
           // Save thread_id
-          const threadIdHolder = getElementById('thread-id-holder');
-          threadIdHolder.textContent = data.get("thread_id");
+          const threadIdHolder = document.getElementById('thread-id-holder');
+          // Save thread_id
+          if (data.hasOwnProperty('thread_id')) {
+            threadIdHolder.textContent = data.thread_id
+          }
 
           const generatorBox = document.querySelector('.generator-box');
           // Replace all occurrences of "&bksl;" with a backslash

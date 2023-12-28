@@ -4,11 +4,22 @@ from flask.sessions import SecureCookieSessionInterface
 from openai import OpenAI
 import os
 from pymongo import MongoClient
+from datetime import timedelta
 
 # Create app
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.secret_key = 'project_testing'
 app.session_interface = SecureCookieSessionInterface()
+
+# Set the default session duration to 20 hours
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+
+# Set the duration for the "Remember Me" cookie to 7 days
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=7)
+
+
+login_manager = LoginManager(app)
+login_manager.login_view = "log_reg_endpoint"
 
 # Set up the MongoDB connection
 openai_uri = os.environ.get('OPENAI_ADMIN_DATABASE_URI')

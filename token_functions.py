@@ -1,4 +1,5 @@
 from flask import session
+from flask_login import current_user
 from extensions import openai_db
 
 
@@ -26,7 +27,7 @@ def token_updating_func(current_tokens):
         collection = openai_db["user_account"]
         remaining_tokens = None
         
-        result = collection.find_one({"email": "admin@gmail.com"})
+        result = collection.find_one({"email": current_user.email})
         if result:
             total_tokens = int(result["tokens"])
             if not prev_thrd_rqst:
@@ -92,7 +93,7 @@ def get_remaining_user_tokens():
     try:
         # Connect to the database
         collection = openai_db["user_account"]
-        result = collection.find_one({"email": "admin@gmail.com"})
+        result = collection.find_one({"email": current_user.email})
         if result:
             tokens_remaining = int(result["tokens"])
 

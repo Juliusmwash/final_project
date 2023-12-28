@@ -1,0 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Gloock&family=Oswald:wght@200;300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+
+*{
+				margin: 0;
+				padding : 0;
+				box-sizing: border-box;
+				font-family: 'Poppins', sans-serif;
+        letter-spacing: 0.1rem;
+				--label-color: #34a0e3;/*#12a3a3;*/
+				--input-color: #a35d12;
+				--heading-color: #34a0e3;/*#1c7a6e;*/
+				--button-bkgrd-color: #34a0e3;/*#12a3a3;*/
+				--button-text-color: #fff;
+				--icon-color: #34a0e3;/*#12a3a3;*/
+				--page-background: #050d36;
+				--deco-spacing: 3px;
+				--border-bottom-color: #008000;/*#98fc03;*/
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				background: #FFF;
+}
+section {
+				display: flex;
+				justify-content: center;
+				align-items : center;
+				width: 100%;
+				min-height: 100vh;
+        background: url('../images/login-register/bg_3.jpg');
+				background-size: cover;
+				background-position: center;
+}
+
+#animation-cover {
+  position: relative;
+  width: 420px;
+  height: 654px;
+  background-color: #222;
+	overflow: hidden;
+	border-radius: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 5px 0;
+	padding: var(--deco-spacing);
+}
+
+
+
+#animation-cover::before,
+#animation-cover::after {
+				content: "";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) rotate(360deg);
+				width: 900px;
+				height: 900px;
+}
+#animation-cover::before {
+				background: conic-gradient(
+								/*transparent,
+                transparent,
+                transparent,*/
+								#1e09ba,
+								#ba09ab,
+                #d400d4,
+                #00cfff,
+                #ff0000,
+                #00ff00,
+                #0000ff,
+                #ffff00,
+                #ff00ff,
+                #00ffff,
+                #ff9900,
+                #9900ff,
+                #ff0099,
+                #00ff99,
+                #990000,
+                #009900
+            );
+            animation: spin 30s linear infinite;
+}
+
+#animation-cover::after {
+				background: conic-gradient(
+                transparent,
+                transparent,
+                transparent,
+								#1e09ba,
+                #ba09ab,
+                #d400d4,
+                #00cfff,
+								#ff0000,
+                #00ff00,
+                #0000ff,
+                #ffff00,
+                #ff00ff,
+                #00ffff,
+                #ff9900,
+                #9900ff,
+                #ff0099,
+                #00ff99,
+                #990000,
+                #009900
+				);
+				animation: spin 10s linear infinite;
+				animation-delay: 3s;
+}
+
+@keyframes spin {
+				0% {
+								transform: translate(-50%, -50%) rotate(0deg);
+				}
+				100% {
+								transform: translate(-50%, -50%) rotate(360deg);
+				}
+}
+
+.login-box {
+				position: relative;
+				width: 100%;
+				height: 100%;
+				background: var(--page-background);
+        background-color: #FFEFD5;
+
+
+				border-radius: 20px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				/*border: 2px solid rgba(255, 255, 255, .5);*/
+				border: none;
+				user-select: none;
+				z-index: 15;
+				/*display: none;*/
+}
+h2 {
+				font-size: 2em;
+				color: var(--heading-color);
+				text-align: center;
+}
+.input-box {
+				position: relative;
+				width: 310px;
+				margin: 30px 0;
+				border-bottom: 2px solid var(--border-bottom-color);
+}
+.eye-icon {
+  position: absolute;
+  right: 30px;
+  top: -17px;
+  width: 50px;
+  /*background-color: blue;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  color: var(--icon-color);
+}
+
+.input-box label {
+				position: absolute;
+				top: 50%;
+				left: 5px;
+				transform: translateY( -50%) ;
+				font-size: 1em;
+				color: var(--label-color);
+				pointer-events: none;
+				transition : .5s;
+}
+label .aste {
+				padding-left: 5px;
+				text-align: bottom;
+				color: #FF0000;
+}
+/*.input-box input:focus~label,
+.input-box input:valid~label {
+				top: -5px;
+}*/
+
+.input-box input {
+				width: 100%;
+				height: 50px;
+				background: transparent;
+				border: none;
+				outline: none;
+				font-size: 1em;
+				padding : 0 35px 0 5px;
+				color: var(--input-color);
+}
+
+
+/* Firefox */
+input:-moz-placeholder,
+input:-moz-placeholder-shown {
+    background-color: transparent !important;
+}
+
+/* Webkit-based browsers (Chrome, Safari) */
+input[type="email"]:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+    background-color: transparent !important;
+}
+
+
+.input-box .icon{
+				position: absolute;
+				right: 1px;
+				color: var(--icon-color);
+				font-size: 1.2em;
+				line-height: 57px;
+}
+
+.input-box #password-strength,
+.login-box #password-error,
+#email-error,
+#password-length-error,
+.input-box #phone-num-error {
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  right: 10px;
+  bottom: -1rem;
+  color: #ff0000;
+  /*background: black;*/
+  padding: 0 10px;
+  border-radius: 5px;
+  font-size: .6rem;
+}
+
+
+button{
+				width: 100%;
+				height: 40px;
+				background: var(--button-bkgrd-color);
+				border: none;
+				outline: none;
+				border-radius : 40px;
+				cursor: pointer;
+				font-size: 1em;
+				color: var(--button-text-color);
+				font-weight: 500;
+}
+.register-link {
+				font-size: .9em;
+				color: #fff;
+				text-align: center;
+				margin: 25px 0 10px;
+}
+.register-link p a {
+				color: #fff;
+				text-decoration: none;
+				font-weight: 600;
+}
+.register-link p a:hover {
+				text-decoration : underline;
+}
+@media (max-width: 370px) {
+				#animation-cover {
+								width: 100%;
+								min-height: 100vh;
+                border-radius: 0;
+                margin: 0;
+				}
+				.login-box {
+								width: 100%;
+								height: 100vh;
+                min-height: 700px;
+								/*border : none;*/
+								border-radius: 0;
+				}
+				.input-box {
+								width: 290px;
+				}
+}

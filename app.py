@@ -4,13 +4,16 @@ import asyncio
 from flask.sessions import SecureCookieSessionInterface
 
 """ Import app, openai_db, openai_client and development blueprint """
-from extensions import app, openai_db
+from extensions import app, openai_db, login_manager
 from development_assisting_route import development_blueprint
 
 """ import openai functions """
 from openai_functions import assistant_creator, wait_on_run
 from openai_functions import submit_message, get_response
 from openai_functions import create_thread_and_run, extract_openai_message
+
+""" Import models and their functions """
+from models_functions import get_user_from_db
 
 """ Import general functions """
 from general_functions import openai_threads_messages_save, text_generator
@@ -39,6 +42,7 @@ import sys
 import random
 import string
 import tracemalloc
+import bcrypt
 
 
 # Start tracing
@@ -51,7 +55,13 @@ tracemalloc.start()
 app.register_blueprint(development_blueprint, url_prefix='')
 
 
+@login_manager.user_loader
+def load_user(email):
+    return get_user_from_db(email)
+
+
 @app.route('/update_user_styling', methods=["POST"])
+@login_required
 def update_user_styling():
     print("called styling")
     try:
@@ -63,7 +73,7 @@ def update_user_styling():
                 print("extracted value")
                 # Connect to the database
                 collection = openai_db["user_account"]
-                email = "admin@gmail.com"
+                email = current_user.email
                 doc = collection.find_one({"email": email})
 
                 if doc:
@@ -80,8 +90,8 @@ def update_user_styling():
         return jsonify({"success": False})
 
 
-
-@app.route('/', methods=["GET"])
+@app.route('/', endpoint="index_endpoint", methods=["GET"])
+@login_required
 async def index():
     # Save user tokens to the session. Used by the requests which do not make api calls
     session["user_tokens"] = get_remaining_user_tokens()
@@ -89,6 +99,11 @@ async def index():
     # Add session data checker variables
     decide = 0
     obj = dict()
+    reg_true = session.get("reg_success", False)
+
+    # Set the reg_success variable back to false
+    if reg_true:
+        session["reg_success"] = False
 
     if "assistant_id" not in session:
         session["assistant_id"] = ""
@@ -102,35 +117,427 @@ async def index():
     if "UNIVERSAL_ERROR" not in session:
         session["UNIVERSAL_ERROR"] = False
 
-    user_styling = await get_user_styling_preference("admin@gmail.com")
-    threads = create_thread_array()
+    obj = await index_content_generator(decide)
+
+    return render_template(
+            "index.html", threads=obj["threads"], tokens_count=obj["tokens_count"],
+            decide=decide, obj=obj["obj"], user_styling=obj["user_styling"],
+            thread_id=session["thread_id"], reg_true=reg_true)
+
+
+async def index_content_generator(decide=0):
+    user_styling = await get_user_styling_preference(current_user.email)
+    print(f"\n\ncurrent_user = {current_user.email}\n\n")
+    threads = []
+    tokens_count = 0
+    obj_data = {}
 
     if not threads:
         print("not threads")
         session["assistant_id"] = ""
         session["thread_id"] = ""
 
-    # Get user remaining tokens
+    """if session.get("user_tokens", 0) == 0:
+        # connect to the database
+        collection = openai_db["user_account"]
+        result = collection.find_one({"email": current_user.email})
+        if result:
+            session["user_tokens"] = result["tokens"]"""
+
     tokens_count = int(session["user_tokens"])
+    # Apply thousand separator, comma
     tokens_count = f"{tokens_count:,}"
 
     if not decide:
-        obj = await thread_decider_func("most_recent_thread")
-        print(f"\n\nobj = {str(obj)}")
+        obj_data = await thread_decider_func("most_recent_thread")
+        print(f"\n\nobj = {str(obj_data)}")
         threads = create_thread_array()
 
-    return render_template(
-            "index.html", threads=threads, tokens_count=tokens_count,
-            decide=decide, obj=obj, user_styling=user_styling,
-            thread_id=session["thread_id"])
+    obj = {
+        "threads": threads,
+        "tokens_count": tokens_count,
+        "obj": obj_data,
+        "user_styling": user_styling,
+        }
+    return obj
+
+
+""" Log in and sign up routes and functions start """
+
+@app.route("/log_reg_template", endpoint="log_reg_endpoint", methods=["GET", "POST"])
+def log_reg_template():
+    return render_template("access.html", message="")
+
+
+@app.route("/login_template", methods=["GET"])
+def login_template():
+    return render_template("login.html")
+
+
+@app.route("/register_template", methods=["GET"])
+def register_template():
+    return render_template("register.html")
+
+
+@app.route("/reset_password_template", methods=["GET"])
+def reset_password_template():
+    return render_template("recover.html")
+
+
+# Registration route
+@app.route('/register', endpoint="register_endpoint", methods=['POST'])
+def process_data():
+    #session.clear()
+    if current_user.is_authenticated:
+        # User is already logged in, redirect to another page
+        return redirect(url_for('/'))
+
+    # Handle form data
+    signup_data = {
+            "email": request.form.get('email'),
+            "password": request.form.get('password'),
+            "first_name": request.form.get('first-name'),
+            "second_name": request.form.get('second-name'),
+    }
+
+    """ Check if the email already exists in the database """
+    # Connect to the database
+    collection = openai_db["user_account"]
+    existing_user = collection.find_one({"email": signup_data["email"]})
+
+    if existing_user:
+        message = "The email address you provided is already in use."
+        return render_template("access.html", message=message)
+
+
+    # Save registration data to the session
+    session['reg_details'] = signup_data
+
+    # Call verification endpoint
+    return redirect(url_for('verify_get_endpoint'))
+
+
+# Verification route
+@app.route('/verify_get', endpoint='verify_get_endpoint', methods=['GET'])
+def verify_get():
+    if current_user.is_authenticated:
+        # User is already logged in, redirect to the index page
+        return redirect(url_for('index.html'))
+
+    # Generate verification key
+    session['valid_key'] = generate_key()
+
+    # Setup time the verification process has started
+    session['start_time'] = time.time()
+
+    """ Send verification code """
+    #send_verification_code(rec_email, ver_key) # Email sending function
+    print(f"\n\nverification key = {session['valid_key']}\n\n")
+
+    # Render verify_details.html file
+    return render_template('verify-details.html', key_code=1)
+
+
+@app.route("/verify_post", methods=["POST"])
+def verify_post():
+    # Check if the form was submitted within the specified time
+    elapsed_time = time.time() - int(session.get('start_time'))
+
+    if elapsed_time > 320:
+        message = "Verification key expired, try registration again"
+        return render_template('access.html', message=message)
+
+    # Retrieve the verification key
+    ver_key = request.form.get('verification_code')
+    print(f"\n\nver_key = {ver_key}\n\n")
+
+    # Convert ver_key to an integer
+    try:
+        verification_code = int(ver_key)
+    except Exception as e:
+        message = "The verification key must only contain numbers"
+        return render_template('access.html', message=message)
+
+    # Confirm the key integrity
+    if verification_code == session.get('valid_key'):
+        # Call the registration proceed function
+        result = registration_proceed()
+
+        if result and result != "email_already_in_use":
+            # Add the registration activation variable in the session.
+            #   To be used by the '/' route to respond with a reg success message.
+            session["reg_success"] = True
+
+            # Do the redirection
+            return redirect(url_for('index_endpoint'))
+
+        elif result and result == "email_already_in_use":
+            message = "That email address is already in use"
+            return render_template("access.html", message=message)
+
+        # An error occured
+        message = "Couldn't finalize the registration, try again latter."
+        return render_template("access.html", message=message)
+
+    # Keys don't match
+    message = "Could not verify, The entered key was not correct."
+    return render_template('access.html', message=message)
 
 
 
+# Function for completing the registration process
+def registration_proceed():
+    print("registration proceed called")
+    reg_details = session.get('reg_details')
+
+    """ Save the registration details in the database """
+    # Connect to database
+    collection = openai_db["user_account"]
+
+    # Ensure email addresses are stored in lowercase for consistency.
+    email = reg_details["email"].lower()
+
+    # Hash password
+    hashed_password = hash_password(reg_details["password"])
+
+    # capitalise user names
+    first_name_raw = reg_details["first_name"]
+    first_name = first_name_raw.capitalize()
+
+    second_name_raw = reg_details["second_name"]
+    second_name = second_name_raw.capitalize()
+
+    # Construct user full name
+    student_name = first_name + " " + second_name
+
+    # Create an object to store the user details which will be saved in the database
+    obj = {
+            "email": email,
+            "password": hashed_password,
+            "student_name": student_name,
+            "tokens": 100000,
+            "accumulating_tokens": 0,
+            "lock": False,
+            "user_styling": {"font_size": 15, "font_family": "Gruppo",
+                             "text_color": "#29ADB2", "background_color": "#040D12"}
+        }
+
+    # Confirm there is no user already registered with that email address
+    result = collection.find_one({"email": email})
+    if result:
+        return "email_already_in_use"
+    
+    # Save these details into the database
+    result = collection.insert_one(obj)
+
+    if result and result.inserted_id:
+        # Create user instance
+        user = get_user_from_db(obj["email"])
+
+        # Login user
+        login_user(user, remember=False)
+
+        # Return the obtained object
+        return True
+
+    return None
+
+
+# Login route
+@app.route('/login', endpoint="login_endpoint", methods=['POST'])
+def login():
+    if current_user.is_authenticated:
+        # User is already logged in, redirect to the index page
+        return redirect(url_for('index_endpoint'))
+
+    # Get the username and password from the form data
+    email = request.form.get('email', None)
+    password = request.form.get('password', None)
+    remember_me = request.form.get('remember_me', False)
+    print(email)
+    print(password)
+
+    if not email or not password:
+        message = "Please provide your logging details."
+        return render_template("access.html", message=message)
+
+    # Convert email into lowercase letters
+    email = email.lower()
+
+    # Query the user details from your database
+    user = get_user_from_db(email)
+    if not user:
+        message = "Student with that email address doesn't exist"
+        return render_template("access.html", message=message)
+
+    if user and bcrypt.checkpw(password.encode('utf-8'), user.password):
+        # Login the user using Flask-Login
+        login_user(user, remember_me)
+        return redirect(url_for('index_endpoint'))
+
+    # If the credentials are incorrect, show the error message
+    message = "Please verify your email or password; login failed."
+    return render_template('access.html', message=message)
+
+
+@app.route("/logout", endpoint="logout_endpoint", methods=["GET"])
+@login_required
+def logout():
+    session.clear()
+    logout_user()
+    message = "Bye, see you back soon"
+    return render_template("access.html", message=message)
+
+
+@app.route("/reset_password_process", methods=["POST"])
+async def reset_password_process():
+    email = request.form.get("email", None)
+    request_method = request.form.get("request_method")
+    confirm_code = request.form.get("reset_code")
+
+    if email and request_method and request_method == "get_reset_code":
+        # Check if the user exists in the database
+        collection = openai_db["user_account"]
+        result = collection.find_one({"email": email})
+
+        if not result:
+            message = "That email address doesn't exist in our database"
+            return render_template("access.html", message=message)
+
+        reset_code = generate_key()
+        print(f"reset_code = {reset_code}")
+
+        # Save user email in the session
+        session["email"] = email
+
+        # Save reset code in the session
+        collection = openai_db["key_integrity_check"]
+
+        obj = {
+            "email": email,
+            "reset_code": reset_code,
+            "verified": False
+            }
+
+        result = collection.insert_one(obj)
+        if result and result.inserted_id > 0:
+            # Send reset code to the client
+            #result2 = send_verification_email(email, reset_code)
+            #if result2:
+            return render_template('verify-details.html', key_code=2)
+
+        # An error Occured
+        message = "Sorry, An error ocurred while sending the reset code."
+        return render_template("access.html", message=message)
+
+    if request_method and request_method == "confirm_reset_code":
+        # Check if the provided reset code match with the one in the database.
+        obj = await confirm_reset_code()
+
+        if obj["success"]:
+            return render_template("/change_password.html")
+        else:
+            return render_template("/access.html", message=obj["error"])
+
+
+async def confirm_reset_code():
+    # Variable to keep track of any arising error.
+    error = ""
+
+    try:
+        # Get the reset code saved earlier in the database
+        collection = openai_db["key_integrity_check"]
+        reset_data = collection.find_one({"email": session["email"]})
+        if reset_data:
+            if int(confirm_code) == reset_data["reset_code"] :
+                obj = {
+                    "verified": True
+                    }
+                result = collection.update_one({"email": session["email"]}, {"$set": obj})
+                if result and result.modified_count > 0:
+                    return {"success": True}
+                    return render_template("/change_password.html")
+                else:
+                    error = "Reset code verified status update failed."
+            else:
+                error = "The provided reset code is not correct."
+        else:
+            error = "Reset code expired, please begin the password reset process again."
+
+    except Exception as e:
+        error = e
+    finally:
+        return {"success": False, "error": error}
+
+    
+
+# Recovery route
+@app.route('/reset_password_data', methods=['POST'])
+def reset_password_data():
+    # Get the username and password from the form data
+    email = request.form.get('email', None)
+    new_password = request.form.get("password")
+
+    if not email or not new_password:
+        message = "Please provide email as well as the new password; reset failed."
+        return render_template("access.html", message=message)
+
+    # Query the user details from your database
+    user = get_user_from_db(email)
+
+    # Check reset code verification status before proceeding
+    collection = openai_db["key_integrity_check"]
+    reset_data = collection.find_one({"email": email})
+    verified_status = reset_data["verified"]
+
+    if verified_status and user and user.email == email:
+        # Delete the reset code information from the database
+        collection.delete_one({"email": email})
+
+        # Hash the new password
+        hashed_password = hash_password(new_password)
+        print(f"new_password: {new_password}")
+
+        # Update the user's password
+        collection2 = openai_db["user_account"]
+        obj = {"password": hashed_password}
+        result = collection2.update_one({"email": email}, {"$set": obj})
+        if result and result.modified_count > 0:
+            return render_template("/access.html", message="Sign in with your new password.")
+
+
+
+# Function for generating verification key
+def generate_key():
+    """
+    Generates a key for account registration details verification
+    """
+    # Generate a random verification key
+    key_array = [random.randint(1, 9) for _ in range(4)]
+
+    # Convert the key_array to a single integer
+    str_key = ''.join(map(str,key_array))
+    key = int(str_key)
+    return key
+
+
+# Function for hashing password
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(
+            password.encode('utf-8'),
+            salt)
+    return hashed_password
+
+
+""" Log in and sign up routes and functions end """
 
 
 """ Assistant functions start """
 
+
 @app.route('/zmc_assistant_data', methods=['POST'])
+@login_required
 async def zmc_assistant_data():
     try:
         prompt = ''
@@ -345,6 +752,7 @@ async def old_thread_request_func(thread_num):
 
 
 @app.route('/get_program_info', methods=['GET'])
+@login_required
 async def program_info_func():
     try:
         # Connect to MongoDB
@@ -364,7 +772,6 @@ async def program_info_func():
 
 """ flask main function start """
 
-#@app.route('/openai', methods=["GET", "POST"])
 async def flask_main(prompt, thread_status):
     print(f"thread status = {thread_status}")
     return_value = ""
@@ -491,6 +898,7 @@ def construct_return_html():
 """ content sharing routes and functions """
 
 # Route for enabling content sharing
+@login_required
 @app.route('/enable_content_sharing', methods=['POST'])
 async def enable_content_sharing():
     """
@@ -554,6 +962,7 @@ async def enable_content_sharing():
 
 
 @app.route('/get_shared_content', methods=["POST"])
+@login_required
 async def get_shared_content():
     print("\n\n Get shared content function called")
     """

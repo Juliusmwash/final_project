@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title> LOGIN </title>
+		<!--<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">-->
+		<link rel="stylesheet" href="../static/css/login.css">
+	</head>
+	<body>
+		<section class="section-brightnessd">
+		<div class="login-box">
+      <form action="/login" method="POST" enctype="application/x-www-form-urlencoded">
+				<div class="input-box">
+					<span class="icon">
+						<ion-icon name="mail"></ion-icon>
+					</span>
+					<input type="email" name="email" class="input-data" required>
+          <div class="error-box" style="display: none;">username or password incorrect</div>
+					<label class="input-label" id="input-label1">Email</label>
+				</div>
+				<div class="input-box">
+
+
+
+					<span class="eye-icon" id="show-pwd">
+						<ion-icon name="eye-off-outline" id="eye-off"></ion-icon>
+						<ion-icon style="display: none;" name="eye-outline" id="eye-on"></ion-icon>
+					</span>
+
+
+
+
+					<span class="icon">
+						<ion-icon name="lock-closed"></ion-icon>
+					</span>
+					<input type="password" name="password" class="input-data" id="password-input-box" required>
+					<div class="input-label" id="input-label2">
+						Password
+					</div>
+				</div>
+				<div class="remember-forgot" style="position: relative;">
+					<label><input type="checkbox" name="remember_me">Remember me</label>
+					<!--<a class="recover-password-btn" href="/recover"> Forgot Password?</a>-->
+					<a class="recover-password-btn" href="/reset_password_template">Forgot Password?</a>
+
+				</div>
+				<button type="submit">Sign In</button>
+
+
+				<div class="register-link">
+          <p>Don't have an account? <a href="{{ url_for('register_endpoint', next=request.args.get('next')) }}">Register</a></p>
+
+				</div>
+			</form>
+
+
+			<!--<div class="recover-password-btn" href="/recover"> Forgot Password?
+				<form style="display: none;" action="/recover" method="POST" id="recover-form">
+					<input type="hidden" value="601" name="category" id="recover-password">
+				</form>
+			</div> -->
+			<!--<a class="recover-password-btn" href="/recover"> Forgot Password?</a>-->
+
+
+
+
+
+		</div>
+		</section>
+		<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+		<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+		<script>
+        // Get references to the button and form elements
+        const recoverButton = document.querySelector('.recover-password-btn');
+        const recoverForm = document.getElementById('recover-form');
+				const inputElements = document.querySelectorAll('.input-data');
+				const inputLabels = document.querySelectorAll('.input-label');
+				const passInput = document.getElementById('password-input-box');
+				const labelElement = document.getElementById('input-label2');
+				// Find the span element by its ID
+				const spanElement = document.getElementById('show-pwd');
+
+				const eyeOn = document.getElementById('eye-off');
+				const eyeOff = document.getElementById('eye-on');
+
+				function visibility() {
+					// Change its innerHTML
+					eyeOn.style.display = eyeOn.style.display === 'none' ? 'block' : 'none';
+					eyeOff.style.display = eyeOn.style.display === 'none' ? 'block' : 'none';
+					if (eyeOff.style.display === 'block') {
+						passInput.type = 'text';
+					} else {
+						passInput.type = 'password';
+					}
+					inputElements[1].focus();
+				}
+
+				// Set event Listener for the password visibility
+				spanElement.addEventListener('click', visibility);
+
+				// Take focus to first input element
+				inputElements[0].focus();
+				inputLabels[0].style.top = '-8px';
+
+
+				inputElements.forEach((element, index) => {
+					element.addEventListener('focus', () => {
+						element.style.backgroundColor = 'transparent';
+						inputLabels[index].style.top = '-8px';
+						if (index === 1) {
+							spanElement.style.top = '-8px';
+						}
+					});
+				});
+
+				inputElements[1].addEventListener('blur', () => {
+					isElementInFocus = false;
+				});
+
+
+				inputElements.forEach((element, index) => {
+					element.addEventListener('blur', () => {
+						if (element.value == '') {
+							inputLabels[index].style.top = '';
+							if (index === 1) {
+								spanElement.style.top = '';
+							}
+						}
+					});
+				});
+
+
+        // Attach a click event listener to the button
+        recoverButton.addEventListener('click', function(event) {
+            // Submit the form programmatically
+            recoverForm.submit();
+        });
+    </script>
+<script>
+  const status = "{{ status }}"; // Assuming status is a string
+  document.addEventListener("DOMContentLoaded", function () {
+    const errorDiv = document.querySelector('.error-box');
+    const inputData = document.querySelectorAll('.input-data');
+
+    if (status === "error") {
+      // Display the error message and focus on the first input field
+      errorDiv.style.display = "block";
+      // Clear the values of all input fields and hide the error message when the user starts typing
+      inputData.forEach(function (input) {
+        input.value = "";
+        input.addEventListener('input', function () {
+          errorDiv.style.display = "none";
+        });
+      });
+    }
+  });
+</script>
+
+   <!-- <script src="{{ url_for('static', filename='js/login.js') }}"></script>-->
+	</body>
+<html>

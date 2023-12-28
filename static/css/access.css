@@ -1,0 +1,100 @@
+* {
+  box-sizing: border-box;
+ }
+
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  width: 100%;
+  padding: 10px;
+  background-color: #000435;
+  border-bottom: 1px solid #3498db;
+  position: fixed;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  color: #7DF9FF;
+}
+
+.access-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  background-color: #FFEFD5;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.message-container {
+  width: 100%;
+  display: flex;
+  padding: 10px;
+}
+
+.message-box {
+  width: 100%;
+  height: auto;
+  padding: 5px;
+  background-color: #FF0000;
+  color: lime;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  border-radius: 5px;
+}
+
+h3 {
+  color: #7DF9FF;
+  font-size: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  color: #3498db;
+  font-size: 22px;
+}
+
+p {
+  color: #3498db;
+  margin-top: -10px;
+}
+
+.buttons-box {
+  width: 100%;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 5px #2980b9;
+}
+
+.button:hover {
+  background-color: #2980b9;
+}
+
+/*# sourceMappingURL=access.css.bkp.map */

@@ -12,8 +12,6 @@ async def get_user_styling_preference(email):
     try:
         # Connect to the database
         collection = openai_db["user_account"]
-        #email = "admin@gmail.com"
-
         result = collection.find_one({"email": email})
         if result:
             styling_obj = result["user_styling"]

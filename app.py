@@ -55,7 +55,6 @@ tracemalloc.start()
 # Register the 'development_blueprint' with the app without the prefix
 app.register_blueprint(development_blueprint, url_prefix='')
 
-
 @login_manager.user_loader
 def load_user(email):
     return get_user_from_db(email)
@@ -227,13 +226,15 @@ async def verify_get():
         return redirect(url_for('index.html'))
 
     # Generate verification key
-    session['valid_key'] = generate_key()
+    ver_key = generate_key()
+    session['valid_key'] = ver_key
 
     # Setup time the verification process has started
     session['start_time'] = time.time()
 
     """ Send verification code """
-    await send_code_by_email(rec_email, ver_key, 1)
+    email = session.get('reg_details')["email"]
+    await send_code_by_email(email, ver_key, 1)
     print(f"\n\nverification key = {session['valid_key']}\n\n")
 
     # Render verify_details.html file

@@ -3,7 +3,11 @@ import secrets
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
 
+# Load environment variables from config file
+dotenv_path = os.path.join(os.path.dirname(__file__), 'config.env')
+load_dotenv(dotenv_path)
 
 # Function for sending shared ID to the user through email
 async def send_code_by_email(rec_email, code, value=0):
@@ -73,6 +77,7 @@ async def send_code_by_email(rec_email, code, value=0):
             server.starttls()  # Use TLS for secure connection
             server.login(sender_email, password)
             server.sendmail(sender_email, rec_email, message.as_string())
+            print("email sent")
         return True
     except Exception as e:
         print(f"send_code_by_email Error = {e}")

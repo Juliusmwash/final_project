@@ -5,6 +5,11 @@ from openai import OpenAI
 import os
 from pymongo import MongoClient
 from datetime import timedelta
+from dotenv import load_dotenv
+
+# Load environment variables from config file
+dotenv_path = os.path.join(os.path.dirname(__file__), 'config.env')
+load_dotenv(dotenv_path)
 
 # Create app
 app = Flask(__name__, static_folder="static", template_folder="templates")

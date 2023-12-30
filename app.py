@@ -21,13 +21,14 @@ from general_functions import num_tokens_from_messages, clean_content
 from general_functions import save_thread_number, create_thread_array
 from general_functions import shift_threads, get_thread_data, get_user_styling_preference
 from general_functions import replace_backslash_latex, reverse_replace_backslash_latex
+from general_functions import generate_key, hash_password
 
 """ Import token functions """
 from token_functions import token_updating_func, calculate_old_thread_tokens
 from token_functions import get_remaining_user_tokens
 
 """ import email functions """
-from email_functions import send_shared_id_email
+from email_functions import send_code_by_email
 
 
 import os
@@ -118,6 +119,7 @@ async def index():
         session["UNIVERSAL_ERROR"] = False
 
     obj = await index_content_generator(decide)
+    print(f"user styling = {obj['user_styling']}")
 
     return render_template(
             "index.html", threads=obj["threads"], tokens_count=obj["tokens_count"],
@@ -219,7 +221,7 @@ def process_data():
 
 # Verification route
 @app.route('/verify_get', endpoint='verify_get_endpoint', methods=['GET'])
-def verify_get():
+async def verify_get():
     if current_user.is_authenticated:
         # User is already logged in, redirect to the index page
         return redirect(url_for('index.html'))
@@ -231,7 +233,7 @@ def verify_get():
     session['start_time'] = time.time()
 
     """ Send verification code """
-    #send_verification_code(rec_email, ver_key) # Email sending function
+    await send_code_by_email(rec_email, ver_key, 1)
     print(f"\n\nverification key = {session['valid_key']}\n\n")
 
     # Render verify_details.html file
@@ -367,7 +369,7 @@ def login():
     # Query the user details from your database
     user = get_user_from_db(email)
     if not user:
-        message = "Student with that email address doesn't exist"
+        message = "Student with that email address doesn't exist."
         return render_template("access.html", message=message)
 
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password):
@@ -376,7 +378,7 @@ def login():
         return redirect(url_for('index_endpoint'))
 
     # If the credentials are incorrect, show the error message
-    message = "Please verify your email or password; login failed."
+    message = "Incorrect password."
     return render_template('access.html', message=message)
 
 
@@ -385,7 +387,7 @@ def login():
 def logout():
     session.clear()
     logout_user()
-    message = "Bye, see you back soon"
+    message = "Success bye, see you back soon"
     return render_template("access.html", message=message)
 
 
@@ -423,7 +425,7 @@ async def reset_password_process():
         if result and result.inserted_id:
             print(f"inserted_id = {result.inserted_id}")
             # Send reset code to the client
-            #result2 = send_verification_email(email, reset_code)
+            await send_code_by_email(email, reset_code, 2)
             #if result2:
             return render_template('verify_reset_code.html', key_code=2)
 
@@ -464,9 +466,11 @@ async def confirm_reset_code(reset_code):
         # Get the reset code saved earlier in the database
         collection = openai_db["key_integrity_check"]
         email = session["email"]
-        reset_data = collection.find_one({"email": email})
+        reset_data = collection.find_one({"email": email}, sort=[("_id", pymongo.DESCENDING)])
+
         if reset_data:
-            if reset_code == reset_data["reset_code"] :
+            print(f"reset code db = {reset_data['reset_code']}")
+            if reset_code == reset_data["reset_code"]:
                 obj = {
                     "verified": True
                     }
@@ -511,7 +515,7 @@ def reset_password_data():
 
     if verified_status and user and user.email == email:
         # Delete the reset code information from the database
-        collection.delete_one({"email": email})
+        collection.delete_many({"email": email})
 
         # Hash the new password
         hashed_password = hash_password(new_password)
@@ -522,31 +526,12 @@ def reset_password_data():
         obj = {"password": hashed_password}
         result = collection2.update_one({"email": email}, {"$set": obj})
         if result and result.modified_count > 0:
-            return render_template("/access.html", message="Sign in with your new password.")
+            message="Success Sign in with your new password."
+            return render_template("/access.html", message=message)
 
 
 
-# Function for generating verification key
-def generate_key():
-    """
-    Generates a key for account registration details verification
-    """
-    # Generate a random verification key
-    key_array = [random.randint(1, 9) for _ in range(4)]
 
-    # Convert the key_array to a single integer
-    str_key = ''.join(map(str,key_array))
-    key = int(str_key)
-    return key
-
-
-# Function for hashing password
-def hash_password(password):
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(
-            password.encode('utf-8'),
-            salt)
-    return hashed_password
 
 
 """ Log in and sign up routes and functions end """
@@ -558,6 +543,10 @@ def hash_password(password):
 @app.route('/zmc_assistant_data', methods=['POST'])
 @login_required
 async def zmc_assistant_data():
+    """if not current_user.is_authenticated:
+        return render_template("access.html", message="")
+    else:
+        print("authenticated")"""
     try:
         prompt = ''
 
@@ -1090,7 +1079,7 @@ async def send_those_emails(tagged_emails, shared_id):
         count = 0
 
         for email in extracted_emails:
-            result = await send_shared_id_email(email, shared_id)
+            result = await send_code_by_email(email, shared_id)
             if result:
                 count += 1
 

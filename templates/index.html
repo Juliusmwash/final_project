@@ -39,7 +39,7 @@
     <header>
 				<div class="token-label" style="display: none;">tokens</div>
 				<div class="tokens-counter" style="display: none;">0</div>
-				<div class="signin-status" style="display: none;">Sign-in</div>
+				<div class="signout-status" style="display: none;">Sign-out</div>
         <h2 class="h2-header">ZMC STUDENT ASSISTANT</h2>
 
 					<!-- Share section -->
@@ -313,6 +313,7 @@
                     </div>
                 </div>
             </div>
+						<a href="/logout" id="logout-btn" style="display: none;"></a>
             <div class="generator-box" style="display: block;">
 							<p>Welcome to <span style="color: lime;">ZMC Student Assistant!</span> I'm here to enhance your understanding of various subjects.</p><p>Proper use can lead to <span style="color: orange;">academic success</span>, but <span style="color: #FF0000;">misusing</span> me as a mere shortcut may hinder your career.</p><p>I encourage you to engage with the content I provide for <span style="color: lime;">optimal educational benefits</span>.</p><p>Feel free to ask questions on any subject, and I'll help you grasp the concepts. <span style="color: lime;">Use me wisely</span>, and I'll contribute to your educational journey positively.</p><p>Remember, success in your studies comes from active learning. <span style="color: orange;">Don't just seek quick answers</span>; take the time to comprehend the material.</p><p>Utilize me as a resource for <span style="color: lime;">clarification</span> and <span style="color: lime;">"deeper understanding</span> rather than a <span style="color: #FF0000;">shortcut for assignments</span>.</p><p>Your education is a valuable investment, and thoughtful use of this assistant can significantly impact your academic growth.</p><p>Happy learning!</p>
 
@@ -331,16 +332,27 @@
 			const userStyling = {{ user_styling | tojson | safe }};
 			const threadIdentity = {{ thread_id | tojson | safe }};
 
+			// Set some global variables
+			let fontSize = 14;
+			let choiceColor;
+			let fontFamily = "Roboto";
+			let choiceBackground;
+
+			if (userStyling) {
+        // Set values for the global variables
+        fontSize = userStyling.font_size;
+        fontFamily = userStyling.font_family;
+        choiceColor = userStyling.text_color;
+        choiceBackground = userStyling.background_color;
+
+        adjustToUserStyling();
+      }
+
 			if (threadIdentity) {
 				// Save the thread id
 				const threadIdHolder = document.getElementById('thread-id-holder');
 				threadIdHolder.textContent = threadIdentity;
 			}
-
-			let fontSize = 14;
-			let choiceColor;
-			let fontFamily = "Roboto";
-			let choiceBackground;
 
 			if (!decide) {
 			  const selectors = ['token-label', 'tokens-counter', 'signin-status', 'copyright',];
@@ -362,7 +374,7 @@
 				document.querySelector('header').style.boxShadow = '0px 15px 5px rgba(0, 0, 0, 0.9)';
 
 				// Call the element innerHTMl loader
-				loadGeneratorElementData(obj);
+				//loadGeneratorElementData(obj);
 			}
 
 			function loadGeneratorElementData(obj) {
@@ -372,34 +384,38 @@
 					const inputString = obj.response_text;
 					const outputString = inputString.replace(/&bksl;/g, "\\");
 					generatorBox.innerHTML = outputString;
+					adjustToUserStyling();
 				}
-				if (userStyling) {
+				/*if (userStyling) {
+					alert("user styling");
+					alert(JSON.stringify(userStyling));
 					// Set values for the global variables
 					fontSize = userStyling.font_size;
 					fontFamily = userStyling.font_family;
 					choiceColor = userStyling.text_color;
 					choiceBackground = userStyling.background_color;
 
-					adjustToUserStyling(userStyling);
-				}
+					adjustToUserStyling();
+				}*/
 			}
 
 
-			function adjustToUserStyling(obj) {
+			function adjustToUserStyling() {
 				// Reset font styles
 				const elementsToStyle = ['p', 'ul', 'li', 'span', '.generator-box'];
 				elementsToStyle.forEach((selector) => {
 				  const elements = document.querySelectorAll(selector);
 				  elements.forEach((element) => {
-				    element.style.fontFamily = obj.font_family;
-				    element.style.fontSize = obj.font_size + "px";
+				    element.style.fontFamily = fontFamily;
+				    element.style.fontSize = fontSize + "px";
 				    if (selector === 'p') {
 				      if (choiceColor) {
-				        element.style.color = obj.text_color;
+				        element.style.color = choiceColor;
 				      }
 						} else if (selector === '.generator-box') {
-							element.style.color = obj.text_color;
-							element.style.backgroundColor = obj.background_color;
+							element.style.fontSize = fontSize;
+							element.style.color = choiceColor;
+							element.style.backgroundColor = choiceBackground;
 						}
 				  }); // <-- Add a closing parenthesis here
 				});
@@ -409,7 +425,8 @@
 			const tokensCounter = document.querySelector('.tokens-counter');
 			if (tokensCounter) {
 				tokensCounter.textContent = tokensCount;
-				if (parseInt(data.tokens_count) <= 1000) {
+				//if (parseInt(data.tokens_count) <= 1000) {
+				if (tokensCount <= 5000) {
 					tokensCounter.style.color = "#FF0000";
 				}
 			} else {

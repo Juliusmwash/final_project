@@ -6,6 +6,8 @@ import logging
 from extensions import openai_db
 from token_functions import token_updating_func
 import pymongo
+import random
+import bcrypt
 
 
 async def get_user_styling_preference(email):
@@ -229,3 +231,26 @@ async def replace_backslash_latex(latex_expression):
 # Reverse to backslashes
 async def reverse_replace_backslash_latex(modified_latex):
     return modified_latex.replace("&bksl;", "\\")
+
+
+# Function for generating verification key
+def generate_key():
+    """
+    Generates a key for account registration details verification
+    """
+    # Generate a random verification key
+    key_array = [random.randint(1, 9) for _ in range(4)]
+
+    # Convert the key_array to a single integer
+    str_key = ''.join(map(str,key_array))
+    key = int(str_key)
+    return key
+
+
+# Function for hashing password
+def hash_password(password):
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(
+            password.encode('utf-8'),
+            salt)
+    return hashed_password

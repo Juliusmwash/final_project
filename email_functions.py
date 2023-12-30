@@ -6,11 +6,11 @@ from email.mime.multipart import MIMEMultipart
 
 
 # Function for sending shared ID to the user through email
-async def send_shared_id_email(rec_email, shared_id):
+async def send_code_by_email(rec_email, code, value=0):
     print("\n\nSENDING EMAIL\n\n")
     # Get the email password from the environment variable
     password = os.getenv('EMAIL_PASSWORD')
-    generated_body = build_email_body(shared_id)
+    generated_body = build_email_body(code, value)
 
     # Sender email
     sender_email = "zambezimarketcenter@gmail.com"
@@ -19,7 +19,12 @@ async def send_shared_id_email(rec_email, shared_id):
     message = MIMEMultipart()
 
     # Set the subject
-    message['Subject'] = 'Shared Content Id'
+    if not value:
+        message['Subject'] = 'Shared Content Id'
+    elif value == 1:
+        message['Subject'] = 'Verify Your Account'
+    elif value == 2:
+        message['Subject'] = 'Password Reset Code'
 
     # Set the sender and recipient
     message['From'] = sender_email
@@ -32,7 +37,8 @@ async def send_shared_id_email(rec_email, shared_id):
         <style>
             body {{
                 font-family: Arial, sans-serif;
-                background-color: #f0f0f0;
+                /*background-color: #f0f0f0;*/
+                background-color: black;
             }}
             h4 {{
                 color: #333;
@@ -69,21 +75,74 @@ async def send_shared_id_email(rec_email, shared_id):
             server.sendmail(sender_email, rec_email, message.as_string())
         return True
     except Exception as e:
-        print(f"send_shared_id_email Error = {e}")
+        print(f"send_code_by_email Error = {e}")
         return False
 
 
 # Function to determine the mail body based on the value passed to it
-def build_email_body(shared_id):
-    body = f"""<p><strong>Dear Student,</strong></p>
+def build_email_body(code, value=0):
+    body = f"""
+    <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
     <p>A new shared content has been created, and you have been tagged.
     <p>The shared ID provided below can be used to retrieve the content
     on the <strong>ZMC Student Assistant</strong> website.
     </p><p>Our commitment is to make learning enjoyable. Utilize the
     shared content to your advantage.</p>
 
-    <p><span>{shared_id}</span></p>
+    <p><span>{code}</span></p>
     <p>Thank you for choosing <strong>ZMC Student Assistant!</strong></p>
-    <h4>Best regards,<br>The ZMC Student Assistant Team</h4>
+    <h4 style="color: #1E90FF;">Best regards,</h4>
+    <h4 style="color: #1E90FF;">ZMC Student Assistant Team</h4>
     """
-    return body
+    body2 = f"""
+    <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
+    <p>Welcome to ZMC Student Assistant! We are thrilled to have
+    you on board, and we appreciate your decision to create an
+    account with us. </p>
+
+    <p>To ensure the security of your account, we need to verify
+    your identity. Please use the following verification code to
+    complete the registration process:</p>
+
+    <p><span>{code}</span></p>
+
+    <p>If you did not request this code or are not the intended
+    recipient, please disregard this message. Your account
+    security is important to us, and this code should only be
+    shared by the account holder.</p>
+
+    <p>Thank you for choosing ZMC Student Assistant. We look
+    forward to providing you with an exceptional experience.</p>
+
+    <h4 style="color: #1E90FF;">Best regards,</h4>
+
+    <h4 style="color: #1E90FF;">ZMC Student Assistant Team</h4>
+    """
+    body3 = f"""
+    <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
+    <p>We have successfully received your password reset request at ZMC Student Assistant.</p>
+
+    <p>We've generated a reset code for you. Please use the
+    following code to complete the password reset process:</p>
+
+    <p><span>{code}</span></p>
+
+    <p>If you did not initiate this password reset or are not the
+    intended recipient, please disregard this message. Your 
+    account security is paramount, and this code should only be
+    shared by the account holder.</p>
+
+    <p>Thank you for trusting ZMC Student Assistant. We're here to
+    assist you and ensure a seamless experience.</p>
+
+    <h4 style="color: #1E90FF;">Best regards,</h4>
+
+    <h4 style="color: #1E90FF;">ZMC Student Assistant Team</h4>
+
+    """
+    if not value:
+        return body
+    elif value == 1:
+        return body2
+    elif value == 2:
+        return body3

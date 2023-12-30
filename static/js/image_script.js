@@ -31,7 +31,11 @@ let fontFamily = "Roboto";
 let choiceColor;
 */
 
-//<div class="exit-font-dropdown">Exit</div>
+const signoutStatus = document.querySelector('.signout-status');
+signoutStatus.addEventListener('click', () => {
+  const logoutBtn = document.getElementById('logout-btn');
+  logoutBtn.click();
+});
 
 /* USER PREFERED STYLING */
 
@@ -74,7 +78,13 @@ async function sendUserStylingFunc() {
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    return response.json();
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+      return response.json();
+    } else {
+      const logoutBtn = document.getElementById('logout-btn');
+      logoutBtn.click();
+    }
   })
   .then(responseData => {
     // Handle the response data as needed
@@ -140,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.decide-section').style.display = 'none';
     document.querySelector('.token-label').style.display = 'flex';
     document.querySelector('.tokens-counter').style.display = 'flex';
-    document.querySelector('.signin-status').style.display = 'flex';
+    document.querySelector('.signout-status').style.display = 'flex';
     document.querySelector('header').style.boxShadow = 'none';
   }
 
@@ -164,7 +174,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        return response.json();
+        const contentType = response.headers.get('Content-Type');
+        if (contentType && contentType.includes('application/json')) {
+          return response.json();
+        } else {
+          const logoutBtn = document.getElementById('logout-btn');
+          logoutBtn.click();
+        }
       })
       .then(responseData => {
         if (responseData.success) {
@@ -756,7 +772,13 @@ async function getProgramInfo() {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      return response.json();
+      const contentType = response.headers.get('Content-Type');
+      if (contentType && contentType.includes('application/json')) {
+        return response.json();
+      } else {
+        const logoutBtn = document.getElementById('logout-btn');
+        logoutBtn.click();
+      }
     })
     .then(data => {
       if (data && data.program_intro) {
@@ -814,6 +836,7 @@ async function sendCroppedImage(imagePrompt = false, textPrompt = '', threadStat
   }
 
   try {
+    let data;
     const response = await fetch('/zmc_assistant_data', {
       method: 'POST',
       body: formData,
@@ -823,9 +846,15 @@ async function sendCroppedImage(imagePrompt = false, textPrompt = '', threadStat
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    const data = await response.json();
-    console.log(data);
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+      console.log(data);
+    } else {
+      const logoutBtn = document.getElementById('logout-btn');
+      logoutBtn.click();
+      return;
+    }
 
     if (data.success) {
       const generatorBox = document.querySelector('.generator-box');

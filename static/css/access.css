@@ -4,11 +4,11 @@
 
 body {
   font-family: Arial, sans-serif;
-  text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: #FFEFD5;
   margin: 0;
   padding: 0;
 }
@@ -21,6 +21,9 @@ header {
   position: fixed;
   top: 0;
   z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .logo {
@@ -29,12 +32,14 @@ header {
 
 .access-container {
   width: 100%;
-  height: 100vh;
+  height: auto;
   display: flex;
-  background-color: #FFEFD5;
   flex-direction: column;
   justify-content: center;
-  position: relative;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .message-container {
@@ -47,12 +52,13 @@ header {
   width: 100%;
   height: auto;
   padding: 5px;
-  background-color: #FF0000;
+  border: 0.5px solid #FF8C00;
   color: lime;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 10px;
+  font-size: 12px;
+  font-weight: bold;
   letter-spacing: 0.5px;
   border-radius: 5px;
 }
@@ -76,6 +82,8 @@ p {
 
 .buttons-box {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .button {

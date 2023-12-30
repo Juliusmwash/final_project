@@ -12,10 +12,10 @@ app.secret_key = 'project_testing'
 app.session_interface = SecureCookieSessionInterface()
 
 # Set the default session duration to 20 hours
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 
 # Set the duration for the "Remember Me" cookie to 7 days
-app.config['REMEMBER_COOKIE_DURATION'] = timedelta(minutes=20)
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(minutes=10)
 
 
 login_manager = LoginManager(app)

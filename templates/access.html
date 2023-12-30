@@ -27,12 +27,40 @@
 		const message = {{ message | tojson | safe }}
 		if (message) {
 			const messageBox = document.querySelector('.message-box');
-			messageBox.innerHTML = '';
-			messageBox.innerHTML = message;
+
+			// Check if it is a success or an error message
+			const { success, result } = processSuccessWord(message);
+
+			if (success) {
+				messageBox.style.color = '#008000';
+			} else {
+				messageBox.style.color = '#DC143C';
+			}
+			messageBox.innerHTML = result;
 			messageBox.style.display = 'flex';
+
 			setTimeout(() => {
 				messageBox.style.display = 'none';
 			}, 10000);
+		}
+
+
+		function processSuccessWord(inputString) {
+			const words = inputString.split(' ');
+
+			for (let i = 0; i < words.length; i++) {
+				if (!i) {
+	        if (words[i].toLowerCase() === 'success' && i + 1 < words.length) {
+						// Remove 'success' and capitalize the following word
+	          words.splice(i, 1, words[i + 1].charAt(0).toUpperCase() + words[i + 1].slice(1));
+	          // Remove the following word
+	          words.splice(i + 1, 1);
+	          return { success: true, result: words.join(' ') };
+	        }
+				}
+			}
+
+			return { success: false, result: inputString };
 		}
 	</script>
 </body>

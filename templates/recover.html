@@ -8,9 +8,12 @@
 		<link rel="stylesheet" href="{{ url_for('static', filename='css/recover_password/recover.css') }}">
 	</head>
 	<body>
+		<div class="loading-container" style="display: none;">
+			<div class="loading-spinner"></div>
+		</div>
 		<section class="section-brightnessd">
 		<div class="recover-box">
-      <form action="/reset_password_process" method="POST" enctype="application/x-www-form-urlencoded">
+      <form action="/reset_password_process" method="POST" enctype="application/x-www-form-urlencoded" id="reset-form">
 				<h2>Recover</h2>
 				<div class="input-box">
 					<span class="icon">
@@ -20,32 +23,22 @@
 					<!--<div class="error-box" style="display: none;">username or password incorrect</div>-->
 					<label>Enter Your Email Address</label>
 				</div>
-				<button type="submit">Send</button>
+				<button type="submit" id="submit-btn">Send</button>
 			</form>
 		</div>
 		</section>
 		<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
 		<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 		<script>
-			/*
-		  const status_msg = "{{ status }}";
-		  document.addEventListener("DOMContentLoaded", function () {
-		    const errorDiv = document.querySelector('.error-box');
-		    const inputData = document.querySelectorAll('.input-data');
+			const loadingContainer = document.querySelector('.loading-container');
+			const submitBtn = document.getElementById('submit-btn');
 
-				if (status_msg === "error") {
-					// Display the error message and focus on the first input field
-					errorDiv.style.display = "block";
-					// Clear the values of all input fields and hide the error message when the user starts typing
-					inputData.forEach(function (input) {
-						input.value = "";
-						input.addEventListener('input', function () {
-							errorDiv.style.display = "none";
-						});
-					});
-				}
+			submitBtn.addEventListener('click', (event) => {
+				event.preventDefault();
+				loadingContainer.style.display = 'flex';
+				const resetForm = document.getElementById('reset-form');
+				resetForm.submit();
 			});
-			*/
 		</script>
 	</body>
 <html>

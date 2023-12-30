@@ -127,6 +127,8 @@ function shareHideBox() {
 // Make an HTTP Post request to the Flask API endpoint to enable content sharing
 async function enableContentSharing(threadId) {
   try {
+    let data;
+
     alert("function invoked");
     const shareLoadingBox = document.querySelector('.share-loading-box1');
     shareLoadingBox.style.display = "flex";
@@ -154,9 +156,14 @@ async function enableContentSharing(threadId) {
       await showResponseToUser(false, "Network Error");
       shareLoadingBox.style.display = "none";
     }
-
-    const data = await response.json();
-    console.log(data);
+    const contentType = response.headers.get('Content-Type');                  if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+      console.log(data);
+    } else {
+      const logoutBtn = document.getElementById('logout-btn');
+      logoutBtn.click();
+      return;
+    }
 
     if (data.success) {
       console.log('Content sharing set successfully');
@@ -202,6 +209,8 @@ async function showResponseToUser(success = true, message) {
 // Make an HTTP Post request to the Flask API endpoint to fetch shared content
 async function getSharedContent(shareId = "") {
   try {
+    let data;
+
     const shareLoadingBox = document.querySelector('.share-loading-box');
     shareLoadingBox.style.display = "flex";
 
@@ -219,9 +228,15 @@ async function getSharedContent(shareId = "") {
       alert("Error occured");
       shareLoadingBox.style.display = "flex";
     }
-
-    const data = await response.json();
-    console.log(data);
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+      console.log(data);
+    } else {
+      const logoutBtn = document.getElementById('logout-btn');
+      logoutBtn.click();
+      return;
+    }
 
     if (data.success) {
       console.log('Content sharing set successfully');

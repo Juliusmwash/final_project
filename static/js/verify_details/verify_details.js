@@ -12,36 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     event.preventDefault();
 
     const ver_key = processDigits();
-    alert(`ver_key = ${ver_key}`);
-
     const myForm = document.getElementById('my-form').submit();
-
-
-    /*
-
-    // Initialise a form to send the verification code
-    const formData = new FormData();
-    formData.append("verification_code", ver_key);
-
-    const requestOptions = {
-      method: 'POST',
-      body: formData
-    };
-
-    fetch('/verify_post', requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        console.log("Registration Successful");
-        alert("Registration successful")
-        //return response.text();
-      })
-      .catch(error => {
-        console.error('Error during verification:', error);
-        alert('Error during verification');
-      });
-      */
   }
 
 
@@ -122,7 +93,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Function to process the entered digits
   function processDigits() {
-    alert("called");
     // Get the values of all the digit inputs
     const digits = Array.from(digitInputs).map(function(input) {
       return input.value;

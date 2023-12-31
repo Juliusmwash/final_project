@@ -8,7 +8,7 @@ from token_functions import token_updating_func
 import pymongo
 import random
 import bcrypt
-
+from flask_login import current_user
 
 async def get_user_styling_preference(email):
     try:
@@ -29,10 +29,15 @@ def openai_threads_messages_save(openai_data):
         collection = openai_db["openai_threads"]
 
         # Find the most recent document
-        result = collection.find_one({}, sort=[("timestamp", pymongo.DESCENDING)])
+        email = current_user.email
+        result = collection.find_one(
+                {"email": email}, sort=[("timestamp", pymongo.DESCENDING)])
 
         # Check if the thread_id already exists
-        result2 = collection.find_one({"thread_id": openai_data['thread_id']})
+        query = {"$and": [
+            {"email": email},
+            {"thread_id": openai_data['thread_id']}]}
+        result2 = collection.find_one(query)
 
         if result:
             # Increment thread_num only if the thread_id is new
@@ -62,6 +67,31 @@ def openai_threads_messages_save(openai_data):
     except Exception as e:
         logging.error(f"openai_threads_create Error: {e}")
         return "fail"
+
+
+#Function to save thread numbers and their associated thread id and assistant id.
+def save_thread_number(thread_num, thread_id, assistant_id):
+    try:
+        email = current_user.email
+        # Connect to the database
+        collection = openai_db['thread_sequence']
+
+        obj = {
+                "email": email,
+                "thread_num": thread_num,
+                "thread_id": thread_id,
+                "assistant_id": assistant_id
+            }
+
+        result = collection.insert_one(obj);
+
+        if result.acknowledged and result.inserted_id:
+            return True
+        return False
+    except Exception as e:
+        print(f"save_thread_number Error: {e}")
+        return False
+
 
 
 def text_generator(image_file):
@@ -136,38 +166,18 @@ async def clean_content(input_content):
     return input_content
 
 
-#Function to save thread numbers and their associated thread id and assistant id.
-def save_thread_number(thread_num, thread_id, assistant_id):
-    try:
-        # Connect to the database
-        collection = openai_db['thread_sequence']
-
-        obj = {
-                "thread_num": thread_num,
-                "thread_id": thread_id,
-                "assistant_id": assistant_id
-            }
-
-        result = collection.insert_one(obj);
-
-        if result.acknowledged and result.inserted_id:
-            return True
-        return False
-    except Exception as e:
-        print(f"save_thread_number Error: {e}")
-        return False
-
-
 # Function to create list of thread numbers
 def create_thread_array():
     try:
+        email = current_user.email
+
         # create a list variable
         thread_list = []
 
         # Connect to the database
         collection = openai_db['thread_sequence']
 
-        result = collection.find()
+        result = collection.find({"email": email})
         if result is not None:
             for obj in result:
                 thread_list.append(obj["thread_num"])
@@ -182,10 +192,14 @@ def create_thread_array():
 def shift_threads(thread_num):
     thread_num = int(thread_num)
     try:
+        email = current_user.email
+
         # Connect to the database
         collection = openai_db["thread_sequence"]
 
-        result = collection.find_one({"thread_num": thread_num})
+        result = collection.find_one(
+                {"$and": [{"email": email},
+                          {"thread_num": thread_num}]})
 
         if result is not None:
             # Update the  session data
@@ -205,13 +219,15 @@ def shift_threads(thread_num):
 # Function for getting thread data
 def get_thread_data(thread_id):
     try:
+        email = current_user.email
+
         # create a variable to hold thread data
         thread_data = ""
 
         # Connect to the database
         collection = openai_db["openai_threads"]
 
-        result = collection.find({"thread_id": thread_id})
+        result = collection.find(                                         {"$and": [{"email": email},                                             {"thread_id": thread_id}]})
 
         if result:
             for obj in result:

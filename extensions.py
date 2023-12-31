@@ -20,7 +20,7 @@ app.session_interface = SecureCookieSessionInterface()
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 
 # Set the duration for the "Remember Me" cookie to 7 days
-app.config['REMEMBER_COOKIE_DURATION'] = timedelta(minutes=10)
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=10)
 
 
 login_manager = LoginManager(app)

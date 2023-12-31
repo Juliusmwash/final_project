@@ -37,9 +37,9 @@
 <body>
 		<div id="blur-div"></div>
     <header>
-				<div class="token-label" style="display: none;">tokens</div>
-				<div class="tokens-counter" style="display: none;">0</div>
-				<div class="signout-status" style="display: none;">Sign-out</div>
+				<div class="token-label">tokens</div>
+				<div class="tokens-counter">0</div>
+				<div class="signout-status">Sign-out</div>
         <h2 class="h2-header">ZMC STUDENT ASSISTANT</h2>
 
 					<!-- Share section -->
@@ -105,31 +105,10 @@
     </header>
 		<span id="thread-id-holder" style="display: none;"></span>
 
-		<section class="decide-section" style="display: none;">
-			<div class="loading-box3" style="display: none; zIndex: 30;">
-				<div id="load-tmp-holder3">Just a moment, I'm working on it&nbsp;</div>
-				<div class="loading-dots3">
-					<span class="loading-dot3"></span>
-					<span class="loading-dot3"></span>
-					<span class="loading-dot3"></span>
-				</div>
-			</div>
-
-			<div class="image-box">
-				<img src="../static/images/generated_image3.png" alt="img">
-			</div>
-			<div class="choose-action-box">
-				<span class="chose-thread-label">Decide On The Ideal Thread</span>
-				<span class="new-thread">New Thread</span>
-				<span class="most-recent-thread">Recently Used</span>
-			</div>
-		</section>
 
 
 
-
-
-		<section class="generator-section" style="display: none;">
+		<section class="generator-section">
         <div class="generator-container">
 					<div class="loading-box2" style="display: none;">
 						<div id="load-tmp-holder2" style="display: flex;">Just a moment, creating a new thread&nbsp;</div>
@@ -315,7 +294,8 @@
             </div>
 						<a href="/logout" id="logout-btn" style="display: none;"></a>
             <div class="generator-box" style="display: block;">
-							<p>Welcome to <span style="color: lime;">ZMC Student Assistant!</span> I'm here to enhance your understanding of various subjects.</p><p>Proper use can lead to <span style="color: orange;">academic success</span>, but <span style="color: #FF0000;">misusing</span> me as a mere shortcut may hinder your career.</p><p>I encourage you to engage with the content I provide for <span style="color: lime;">optimal educational benefits</span>.</p><p>Feel free to ask questions on any subject, and I'll help you grasp the concepts. <span style="color: lime;">Use me wisely</span>, and I'll contribute to your educational journey positively.</p><p>Remember, success in your studies comes from active learning. <span style="color: orange;">Don't just seek quick answers</span>; take the time to comprehend the material.</p><p>Utilize me as a resource for <span style="color: lime;">clarification</span> and <span style="color: lime;">"deeper understanding</span> rather than a <span style="color: #FF0000;">shortcut for assignments</span>.</p><p>Your education is a valuable investment, and thoughtful use of this assistant can significantly impact your academic growth.</p><p>Happy learning!</p>
+							<p>Welcome to <span style="color: lime;">ZMC Student Assistant!</span> I'm here to enhance your understanding of various subjects.</p>
+							<!--<p>Proper use can lead to <span style="color: orange;">academic success</span>, but <span style="color: #FF0000;">misusing</span> me as a mere shortcut may hinder your career.</p><p>I encourage you to engage with the content I provide for <span style="color: lime;">optimal educational benefits</span>.</p><p>Feel free to ask questions on any subject, and I'll help you grasp the concepts. <span style="color: lime;">Use me wisely</span>, and I'll contribute to your educational journey positively.</p><p>Remember, success in your studies comes from active learning. <span style="color: orange;">Don't just seek quick answers</span>; take the time to comprehend the material.</p><p>Utilize me as a resource for <span style="color: lime;">clarification</span> and <span style="color: lime;">"deeper understanding</span> rather than a <span style="color: #FF0000;">shortcut for assignments</span>.</p><p>Your education is a valuable investment, and thoughtful use of this assistant can significantly impact your academic growth.</p><p>Happy learning!</p>-->
 
             </div>
         </div>
@@ -325,18 +305,19 @@
     </footer>
     <script>
 			// Get the data threads sequence from the server
-			const threadsDataSequence = {{ threads | tojson | safe }};
 			const tokensCount = {{ tokens_count | tojson | safe }};
-			const decide = {{ decide | tojson | safe }};
 			const obj = {{ obj | tojson | safe }};
 			const userStyling = {{ user_styling | tojson | safe }};
 			const threadIdentity = {{ thread_id | tojson | safe }};
+
+			alert(`obj = ${JSON.stringify(obj.response_text)}`);
 
 			// Set some global variables
 			let fontSize = 14;
 			let choiceColor;
 			let fontFamily = "Roboto";
 			let choiceBackground;
+			const threadsDataSequence = obj.threads;
 
 			if (userStyling) {
         // Set values for the global variables
@@ -354,29 +335,6 @@
 				threadIdHolder.textContent = threadIdentity;
 			}
 
-			if (!decide) {
-			  const selectors = ['token-label', 'tokens-counter', 'signin-status', 'copyright',];
-				document.querySelector('.decide-section').style.display = 'none';
-				document.querySelector('.generator-section').style.display = 'block';
-				document.querySelector('.token-label').style.display = 'flex';
-				document.querySelector('.tokens-counter').style.display = 'flex';
-				document.querySelector('.signin-status').style.display = 'flex';
-				document.querySelector('header').style.boxShadow = 'none';
-
-			  for (const selector of selectors) {
-			      document.querySelector(`.${selector}`).style.display = 'flex';
-			  }
-
-				// Call the element innerHTMl loader
-				loadGeneratorElementData(obj);
-			}else {
-				document.querySelector('.decide-section').style.display = 'flex';
-				document.querySelector('header').style.boxShadow = '0px 15px 5px rgba(0, 0, 0, 0.9)';
-
-				// Call the element innerHTMl loader
-				//loadGeneratorElementData(obj);
-			}
-
 			function loadGeneratorElementData(obj) {
 				if (obj && obj.success) {
 					const generatorBox = document.querySelector('.generator-box');
@@ -386,17 +344,6 @@
 					generatorBox.innerHTML = outputString;
 					adjustToUserStyling();
 				}
-				/*if (userStyling) {
-					alert("user styling");
-					alert(JSON.stringify(userStyling));
-					// Set values for the global variables
-					fontSize = userStyling.font_size;
-					fontFamily = userStyling.font_family;
-					choiceColor = userStyling.text_color;
-					choiceBackground = userStyling.background_color;
-
-					adjustToUserStyling();
-				}*/
 			}
 
 

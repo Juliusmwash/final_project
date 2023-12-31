@@ -23,13 +23,6 @@ let counterCheck = 14;
 let interval;
 let newThreadController = true;
 
-/*
-// Moved to the first script
-let choiceBackground;
-let fontSize = 14;
-let fontFamily = "Roboto";
-let choiceColor;
-*/
 
 const signoutStatus = document.querySelector('.signout-status');
 signoutStatus.addEventListener('click', () => {
@@ -47,7 +40,6 @@ UserStylingBtn.addEventListener('click', async () => {
 });
 
 async function sendUserStylingFunc() {
-  // Assuming 'fontSize', 'choiceColor', and 'choiceBackground' are defined elsewhere in your code
   let obj = {};
   obj["font_family"] = fontFamily;
   obj["font_size"] = fontSize;
@@ -102,132 +94,6 @@ async function sendUserStylingFunc() {
 }
 
 /* USER PREFERED STYLING END */
-
-
-
-
-
-/* DECIDE ELEMENT SCRIPT */
-document.addEventListener('DOMContentLoaded', function () {
-  function decideLoadingFunc(action = "activate") {
-    const decideSection = document.querySelector('.decide-section');
-    const loadingBox = decideSection.querySelector('.loading-box3');
-    const chooseThreadLabel = document.querySelector('.chose-thread-label');
-    const newThread = document.querySelector('.new-thread');
-    const mostRecentThread = document.querySelector('.most-recent-thread');
-
-    if (action === "activate") {
-      newThread.style.pointerEvents = 'none';
-      mostRecentThread.style.pointerEvents = 'none';
-      newThread.style.cursor = 'not-allowed';
-      mostRecentThread.style.pointerEvents  = 'not-allowed';
-
-      chooseThreadLabel.style.display = 'none';
-      loadingBox.style.display = "flex";
-    } else {
-      loadingBox.style.display = "none";
-      newThread.style.pointerEvents = 'unset';
-      mostRecentThread.style.pointerEvents = 'unset';
-      newThread.style.cursor = 'pointer';
-      mostRecentThread.style.cursor = 'pointer';
-    }
-  }
-
-  const element1 = document.querySelector('.new-thread');
-  const element2 = document.querySelector('.most-recent-thread');
-
-  element1.addEventListener('click', function () {
-    sendData({ thread_choice: "new_thread", prompt: 'new thread'});
-  });
-
-  element2.addEventListener('click', function () {
-    sendData({ thread_choice: "most_recent_thread", prompt: "continuation"});
-  });
-
-
-  function activateGeneratorSection() {
-    document.querySelector('.generator-section').style.display = 'block';
-    document.querySelector('.decide-section').style.display = 'none';
-    document.querySelector('.token-label').style.display = 'flex';
-    document.querySelector('.tokens-counter').style.display = 'flex';
-    document.querySelector('.signout-status').style.display = 'flex';
-    document.querySelector('header').style.boxShadow = 'none';
-  }
-
-
-
-  function sendData(data) {
-    // Call the loading function
-    decideLoadingFunc();
-    const url = '/zmc_assistant_data';
-
-    // Fix: Correct the typo in FormData instantiation
-    const formData = new FormData();
-    formData.append('thread_choice', data.thread_choice);
-    formData.append('prompt', data.prompt);
-
-    fetch(url, {
-      method: 'POST',
-      body: formData,
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const contentType = response.headers.get('Content-Type');
-        if (contentType && contentType.includes('application/json')) {
-          return response.json();
-        } else {
-          const logoutBtn = document.getElementById('logout-btn');
-          logoutBtn.click();
-        }
-      })
-      .then(responseData => {
-        if (responseData.success) {
-          //alert(`${responseData.response_text}`);
-
-          // Save thread_id
-          const threadIdHolder = document.getElementById('thread-id-holder');
-          // Save thread_id
-          if (data.hasOwnProperty('thread_id')) {
-            threadIdHolder.textContent = data.thread_id
-          }
-
-          const generatorBox = document.querySelector('.generator-box');
-          // Replace all occurrences of "&bksl;" with a backslash
-
-          const inputString = responseData.response_text;
-          const outputString = inputString.replace(/&bksl;/g, "\\");
-          generatorBox.innerHTML = outputString;
-
-          // Create elements to represent available threads in the server
-          generateThreadButtons(responseData.threads)
-
-          // Activate the generator section and other related elements while
-          //  deactivating decide section elements
-          activateGeneratorSection();
-        }
-      })
-      .catch(error => {
-        // Handle errors during the fetch operation
-        alert(error);
-        console.error('Error during fetch operation:', error);
-      })
-      .finally(() => {
-        // Ensure this runs even in case of success or error
-        decideLoadingFunc("deactivate");
-      });
-  }
-
-});
-
-/* END */
-
-
-
-
-
-
 
 
 
@@ -512,13 +378,6 @@ function changeFontFamily(font_family) {
   });
 })();
 
-
-
-
-
-/*
-<div class="confirm-new-thread">                                             <span class="accept-label">Sure you want a new thread?</span>              <div class="confirm-new-thread-btns">                                        <span class="accept-btn">Yes</span>                                        <span class="decline-btn">No</span>                                      </div>                                                                   </div>
-*/
 
 
 function newThreadShow() {

@@ -124,9 +124,10 @@ async def index():
 
     obj = await index_content_generator(decide)
     print(f"user styling = {obj['user_styling']}")
+    print(f"session thread id = {session['thread_id']}")
 
     return render_template(
-            "index.html", threads=obj["threads"], tokens_count=obj["tokens_count"],
+            "index.html", tokens_count=obj["tokens_count"],
             decide=decide, obj=obj["obj"], user_styling=obj["user_styling"],
             thread_id=session["thread_id"], reg_true=reg_true)
 
@@ -143,29 +144,56 @@ async def index_content_generator(decide=0):
         session["assistant_id"] = ""
         session["thread_id"] = ""
 
-    """if session.get("user_tokens", 0) == 0:
-        # connect to the database
-        collection = openai_db["user_account"]
-        result = collection.find_one({"email": current_user.email})
-        if result:
-            session["user_tokens"] = result["tokens"]"""
-
     tokens_count = int(session["user_tokens"])
     # Apply thousand separator, comma
     tokens_count = f"{tokens_count:,}"
 
-    if not decide:
-        obj_data = await thread_decider_func("most_recent_thread")
-        print(f"\n\nobj = {str(obj_data)}")
-        threads = create_thread_array()
+    check = await check_thread_availability()
+    if check:
+        obj_data = await thread_decider_func(
+                "most_recent_thread")
+        print("session not empty")
+    else:
+        print("creating a new thread")
+        obj_data = await thread_decider_func("new_thread")
+
+    print(f"\n\nobj = {str(obj_data)}")
 
     obj = {
-        "threads": threads,
         "tokens_count": tokens_count,
         "obj": obj_data,
         "user_styling": user_styling,
         }
     return obj
+
+
+async def check_thread_availability():
+    try:
+        email = current_user.email
+        print(f"check_thread_availability email = {email}")
+
+        # Connect to the database
+        collection = openai_db["thread_sequence"]
+
+        # Check for the available threads
+        #thread = collection.find_one({"email": email}).sort(
+        #[("_id", -1)])
+        thread = collection.find_one({"email": email},
+                                     sort=[("_id", -1)])
+
+        if thread:
+            # Most recent thread found
+            # Set the session variables
+            session["thread_id"] = thread["thread_id"]
+            session["assistant_id"] = thread["assistant_id"]
+            print("check_thread_availability True")
+            return True
+        else:
+            print("check_thread_availability problem getting thread")
+        return False
+    except Exception as e:
+        print(f"check_thread_availability Error = {e}")
+        return False
 
 
 """ Assistant functions start """

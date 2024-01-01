@@ -9,8 +9,28 @@ from dotenv import load_dotenv
 dotenv_path = os.path.join(os.path.dirname(__file__), 'config.env')
 load_dotenv(dotenv_path)
 
+
 # Function for sending shared ID to the user through email
 async def send_code_by_email(rec_email, code, value=0):
+    """
+    Sends an email with a code or value to the specified recipient email
+    address.
+
+    Args:
+    - rec_email (str): Recipient's email address.
+    - code (str): Code or value to be sent in the email.
+    - value (int, optional): Type of email content (
+        0: Shared Content Id,
+        1: Verify Your Account,
+        2: Password Reset Code
+    ).
+
+    Returns:
+    - bool: True if the email is sent successfully, False otherwise.
+
+    This function sends an email using the Gmail SMTP server with the
+    specified code or value to the recipient's email address.
+    """
     print("\n\nSENDING EMAIL\n\n")
     # Get the email password from the environment variable
     password = os.getenv('EMAIL_PASSWORD')
@@ -62,7 +82,7 @@ async def send_code_by_email(rec_email, code, value=0):
         {}
     </body>
     </html>
-    """.format(generated_body) # Insert the generated body
+    """.format(generated_body)  # Insert the generated body
 
     # Attach the HTML content as MIMEText
     html_part = MIMEText(html_content, 'html')
@@ -86,6 +106,24 @@ async def send_code_by_email(rec_email, code, value=0):
 
 # Function to determine the mail body based on the value passed to it
 def build_email_body(code, value=0):
+    """
+    Builds the email body based on the provided code and value.
+
+    Args:
+    - code (str): Code or value to be included in the email body.
+    - value (int, optional): Type of email content (
+        0: Shared Content Id,
+        1: Verify Your Account,
+        2: Password Reset Code
+    ).
+
+    Returns:
+    - str: The formatted email body.
+
+    This function generates the email body based on the provided code and
+    value, following the specified email content format.
+    """
+
     body = f"""
     <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
     <p>A new shared content has been created, and you have been tagged.
@@ -125,7 +163,8 @@ def build_email_body(code, value=0):
     """
     body3 = f"""
     <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
-    <p>We have successfully received your password reset request at ZMC Student Assistant.</p>
+    <p>We have successfully received your password reset request at ZMC
+    Student Assistant.</p>
 
     <p>We've generated a reset code for you. Please use the
     following code to complete the password reset process:</p>
@@ -133,7 +172,7 @@ def build_email_body(code, value=0):
     <p><span>{code}</span></p>
 
     <p>If you did not initiate this password reset or are not the
-    intended recipient, please disregard this message. Your 
+    intended recipient, please disregard this message. Your
     account security is paramount, and this code should only be
     shared by the account holder.</p>
 

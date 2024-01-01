@@ -1,37 +1,3 @@
-from flask import Blueprint, Flask, request, render_template, session, redirect, url_for, jsonify
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-import asyncio
-from flask.sessions import SecureCookieSessionInterface
-
-""" Import app, openai_db, openai_client and blueprints """
-from extensions import app, openai_db, login_manager
-from development_assisting_route import development_blueprint
-from register_login_logout import reg_log_blueprint
-
-""" import openai functions """
-from openai_functions import assistant_creator, wait_on_run
-from openai_functions import submit_message, get_response
-from openai_functions import create_thread_and_run, extract_openai_message
-
-""" Import models and their functions """
-from models_functions import get_user_from_db
-
-""" Import general functions """
-from general_functions import openai_threads_messages_save, text_generator
-from general_functions import num_tokens_from_messages, clean_content
-from general_functions import save_thread_number, create_thread_array
-from general_functions import shift_threads, get_thread_data, get_user_styling_preference
-from general_functions import replace_backslash_latex, reverse_replace_backslash_latex
-from general_functions import generate_key, hash_password
-
-""" Import token functions """
-from token_functions import token_updating_func, calculate_old_thread_tokens
-from token_functions import get_remaining_user_tokens
-
-""" import email functions """
-from email_functions import send_code_by_email
-
-
 import os
 import uuid
 import json
@@ -45,13 +11,47 @@ import random
 import string
 import tracemalloc
 import bcrypt
+import asyncio
+
+from flask import Blueprint, Flask, request, render_template, session,
+from flask import redirect, url_for, jsonify
+from flask_login import LoginManager, UserMixin, login_user,
+from flask login import login_required, logout_user, current_user
+from flask.sessions import SecureCookieSessionInterface
+
+"""
+Import app, openai_db, openai_client and blueprints
+import openai functions
+Import models and their functions
+Import general functions
+Import token functions
+Import email functions
+"""
+from extensions import app, openai_db, login_manager
+from development_assisting_route import development_blueprint
+from register_login_logout import reg_log_blueprint
+from openai_functions import assistant_creator, wait_on_run
+from openai_functions import submit_message, get_response
+from openai_functions import create_thread_and_run, extract_openai_message
+from models_functions import get_user_from_db
+from general_functions import openai_threads_messages_save, text_generator
+from general_functions import num_tokens_from_messages, clean_content
+from general_functions import save_thread_number, create_thread_array
+from general_functions import shift_threads, get_thread_data,
+from general_functions import get_user_styling_preference
+from general_functions import replace_backslash_latex,
+from general_functions import reverse_replace_backslash_latex
+from general_functions import generate_key, hash_password
+from token_functions import token_updating_func, calculate_old_thread_tokens
+from token_functions import get_remaining_user_tokens
+from email_functions import send_code_by_email
 
 
 # Start tracing
 tracemalloc.start()
 
-#MATH_ASSISTANT_ID = '';
-#mathematical expression using LaTeX syntax
+# MATH_ASSISTANT_ID = '';
+# mathematical expression using LaTeX syntax
 
 # Register the 'development_blueprint' with the app without the prefix
 app.register_blueprint(development_blueprint, url_prefix='')
@@ -62,13 +62,50 @@ app.register_blueprint(reg_log_blueprint, url_prefix='')
 
 @login_manager.user_loader
 def load_user(email):
+    """
+    Callback function registered with @login_manager.user_loader.
+
+    Loads a user object from the database based on the provided email.
+
+    Parameters:
+    - email (str): The email address of the user to load.
+
+    Returns:
+    - User: The user object retrieved from the database.
+
+    """
+
     return get_user_from_db(email)
 
 
 @app.route('/update_user_styling', methods=["POST"])
 @login_required
 def update_user_styling():
-    print("called styling")
+    """
+    Update user styling information.
+
+    This route allows authenticated users to update their styling
+    preferences.
+
+    Method: POST
+
+    Parameters (JSON):
+    - user_styling (dict): Dictionary containing user styling preferences.
+
+    Returns (JSON):
+    - {"success": True} if the update is successful,
+    {"success": False} otherwise.
+
+    Note:
+    - Requires authentication through the use of the @login_required
+    decorator.
+    - The user_styling parameter should be a dictionary with styling
+    preferences.
+    - The user's styling information is stored in the "user_account"
+    collection in the database.
+
+    """
+    # print("called styling")
     try:
         styling_request = request.json
         if styling_request:
@@ -83,13 +120,16 @@ def update_user_styling():
 
                 if doc:
                     print("doc found")
-                    result = collection.update_one({"_id": doc["_id"]}, {"$set": {"user_styling": user_styling}})
+                    result = collection.update_one(
+                            {"_id": doc["_id"]},
+                            {"$set": {"user_styling": user_styling}})
+
                     if result.modified_count > 0:
                         print("update success")
                         return jsonify({"success": True})
-        
+
         return jsonify({"success": False})
-    
+
     except Exception as e:
         print(f"update_user_styling Error: {e}")
         return jsonify({"success": False})
@@ -98,7 +138,20 @@ def update_user_styling():
 @app.route('/', endpoint="index_endpoint", methods=["GET"])
 @login_required
 async def index():
-    # Save user tokens to the session. Used by the requests which do not make api calls
+    """
+    Render the index page.
+
+    This route renders the index page, which includes user information
+    and styling preferences.
+
+    Method: GET
+
+    Returns:
+    - Rendered HTML template with user information and styling preferences.
+
+    """
+    # Save user tokens to the session. Used by the requests which do
+    #   not make api calls
     session["user_tokens"] = get_remaining_user_tokens()
 
     # Add session data checker variables
@@ -133,6 +186,19 @@ async def index():
 
 
 async def index_content_generator(decide=0):
+    """
+    Generate content for the index page.
+
+    This function generates content for the index page, including user
+    styling preferences, thread information, and token count.
+
+    Parameters:
+    - decide (int): Decision variable.
+
+    Returns:
+    - dict: Dictionary containing tokens_count, obj_data, and user_styling.
+
+    """
     user_styling = await get_user_styling_preference(current_user.email)
     print(f"\n\ncurrent_user = {current_user.email}\n\n")
     threads = []
@@ -168,6 +234,16 @@ async def index_content_generator(decide=0):
 
 
 async def check_thread_availability():
+    """
+    Check the availability of threads for the current user.
+
+    This function checks if there are existing threads for the
+    current user.
+
+    Returns:
+    - True if an existing thread is found, False otherwise.
+
+    """
     try:
         email = current_user.email
         print(f"check_thread_availability email = {email}")
@@ -176,8 +252,6 @@ async def check_thread_availability():
         collection = openai_db["thread_sequence"]
 
         # Check for the available threads
-        #thread = collection.find_one({"email": email}).sort(
-        #[("_id", -1)])
         thread = collection.find_one({"email": email},
                                      sort=[("_id", -1)])
 
@@ -202,10 +276,30 @@ async def check_thread_availability():
 @app.route('/zmc_assistant_data', methods=['POST'])
 @login_required
 async def zmc_assistant_data():
-    """if not current_user.is_authenticated:
-        return render_template("access.html", message="")
-    else:
-        print("authenticated")"""
+    """
+    Handle requests related to ZMC Student Assistant data.
+
+    This route processes various requests related to the ZMC Student Assistant,
+    such as creating new threads, changing threads, handling image files,
+    and interacting with the assistant.
+
+    Method: POST
+
+    Request Headers:
+    - File-Type: Type of the file (e.g., Image)
+
+    Form Data:
+    - thread_status: Status of the thread (e.g., new)
+    - thread_num: Number of the thread
+    - prompt: Prompt for the assistant
+    - thread_choice: Choice for thread handling
+    - program_info: Information request flag (e.g., info_request)
+
+    Returns (JSON):
+    - Success response with relevant data or failure response with an
+    error message.
+
+    """
     try:
         prompt = ''
 
@@ -236,7 +330,6 @@ async def zmc_assistant_data():
                 return jsonify({"success": False,
                                 "response_text": obj["response_text"]})
 
-
         if thread_status == "new":
             print("making new thread, thread status is new")
             # Call new_thread_request_func()
@@ -258,7 +351,6 @@ async def zmc_assistant_data():
                                 "tokens_count": obj["tokens_count"],
                                 "thread_id": session["thread_id"]})
 
-
         if file_type == "Image":
             # Get the image file from the request
             image_file = request.files['image']
@@ -272,7 +364,8 @@ async def zmc_assistant_data():
                     print(f"IMAGE TEXT = {str(prompt)}")
 
         result = await flask_main(prompt, thread_status)
-        # Get updated token count from the session. Already there is a function that has updated it.
+        # Get updated token count from the session. Already there is a
+        #   function that has updated it.
 
         tokens = session.get("user_tokens", 0)
         if tokens:
@@ -328,14 +421,25 @@ async def thread_decider_func(thread_choice):
 
 
 async def info_request_func():
+    """
+    Retrieve program information.
+
+    This function retrieves information about the ZMC Student Assistant
+    program.
+
+    Returns:
+    - dict: Success response with program information, tokens count,
+    or failure response with an error message.
+
+    """
     Error = None
     try:
         # Connect to the database
         collection = openai_db["program_intro"]
-        result = collection.find({},{"_id": 0})
+        result = collection.find({}, {"_id": 0})
         if result:
             for obj in result:
-                #print(f"string = {str(obj.get('program_intro'))}")
+                # print(f"string = {str(obj.get('program_intro'))}")
                 raw_program_info = r"{}".format(obj.get("program_intro"))
                 print(raw_program_info)
                 tokens = session.get("user_tokens", 0)
@@ -364,15 +468,31 @@ async def info_request_func():
 
 
 async def new_thread_request_func(prompt, thread_status):
+    """
+    Handle a request to start a new thread.
+
+    This function processes a request to start a new thread by providing a
+    prompt to the assistant.
+
+    Parameters:
+    - prompt (str): Prompt for the assistant.
+    - thread_status (str): Status of the thread (e.g., new).
+
+    Returns:
+    - dict: Success response with the assistant's response, tokens count,
+    or failure response with an error message.
+
+    """
     # check if it is a request to start a new thread
     prompt_token = await num_tokens_from_messages(prompt)
-    prompt_token += 98 # Tokens for the Instructions sent to the assistant.
+    prompt_token += 98  # Tokens for the Instructions sent to the assistant.
 
     # Save this value to the session for later retrieval
     session["instruction_prompt_tokens"] = prompt_token
 
     result = await flask_main(prompt, thread_status)
-    # Get the user updated tokens from the database, already saved in the session
+    # Get the user updated tokens from the database, already saved in
+    #   the session
     tokens = session.get("user_tokens", 0)
     tokens = f"{int(tokens):,}"
 
@@ -386,6 +506,20 @@ async def new_thread_request_func(prompt, thread_status):
 
 
 async def old_thread_request_func(thread_num):
+    """
+    Handle a request to switch to an old thread.
+
+    This function processes a request to switch to an old thread based on
+    the provided thread number.
+
+    Parameters:
+    - thread_num (str): Number of the thread.
+
+    Returns:
+    - dict: Success response with the assistant's response, tokens count,
+    or failure response with an error message.
+
+    """
     thread_data = shift_threads(thread_num)
     # Try retrieving token data feom the session
     tokens = int(session.get("user_tokens", 0))
@@ -419,6 +553,17 @@ async def old_thread_request_func(thread_num):
 @app.route('/get_program_info', methods=['GET'])
 @login_required
 async def program_info_func():
+    """
+    Get program information.
+
+    This route retrieves program information from MongoDB.
+
+    Method: GET
+
+    Returns (JSON):
+    - Program information document.
+
+    """
     try:
         # Connect to MongoDB
         collection = openai_db['program_intro']
@@ -437,21 +582,37 @@ async def program_info_func():
 
 """ flask main function start """
 
+
 async def flask_main(prompt, thread_status):
+    """
+    Main function to interact with the Flask app and OpenAI.
+
+    This function handles the main interaction with the Flask app and
+    OpenAI based on the provided prompt and thread status.
+
+    Parameters:
+    - prompt (str): Prompt for the assistant.
+    - thread_status (str): Status of the thread (e.g., active).
+
+    Returns:
+    - str: Constructed HTML for the response.
+
+    """
     print(f"thread status = {thread_status}")
     return_value = ""
     check = 0
     openai_data = None
 
     prompt_token = await num_tokens_from_messages(prompt)
-    prompt_token += 98 # Tokens for the Instructions sent to the assistant.
+    prompt_token += 98  # Tokens for the Instructions sent to the assistant.
 
     # Save this value to the session for later retrieval
     session["instruction_prompt_tokens"] = prompt_token
 
     print(f"\n\n prompt tokens = {prompt_token}\n\n")
 
-    if thread_status == "active" and "assistant_id" in session and session["assistant_id"]:
+    if thread_status == "active" and "assistant_id" in session and session[
+            "assistant_id"]:
         print("Using session data, thread status is active")
         # Call thread_continuation_request_func()
         openai_data = await thread_continuation_request_func(prompt)
@@ -463,12 +624,26 @@ async def flask_main(prompt, thread_status):
     # Save data to the database
     openai_threads_messages_save(openai_data)
 
-    #print(f"\n\nreturning: {return_value}\n\n")
+    # print(f"\n\nreturning: {return_value}\n\n")
     return construct_return_html()
 
+
 async def thread_continuation_request_func(prompt):
+    """
+    Handle a request for thread continuation.
+
+    This function processes a request for thread continuation based on
+    the provided prompt.
+
+    Parameters:
+    - prompt (str): Prompt for thread continuation.
+
+    Returns:
+    - dict: Constructed data for saving in the database.
+
+    """
     # Update thread timer
-    session["thread_continuation_timer"] = False # Signals thread continuation
+    session["thread_continuation_timer"] = False  # Signals thread continuation
     print(f"thread_continuation_request_func prompt = {prompt}")
 
     print("Using session assistant and thread")
@@ -477,7 +652,8 @@ async def thread_continuation_request_func(prompt):
     check = 1
     thread, run = await create_thread_and_run(assistant_id, prompt, thread_id)
     run = await wait_on_run(run, thread_id, check)
-    return_value = await extract_openai_message(await get_response(thread_id, check))
+    return_value = await extract_openai_message(
+            await get_response(thread_id, check))
     return_value = await clean_content(return_value)
 
     # Replace the backslashes with "&bksl;"
@@ -487,8 +663,15 @@ async def thread_continuation_request_func(prompt):
     print(f"\n\nreturn_value = {return_value_clean}")
 
     # Define an odject to save in the database
-    prompt =f"""<h3 style="margin-top: 20px; color: #F4CE14;">User</h3><p style="color: #7ED7C1;">{prompt}</p>"""
-    return_value = f"""<h3 style="margin-top: 20px; color: orange;">Assistant</h3>{return_value_clean}"""
+    prompt = (
+            """<h3 style="margin-top: 20px; color: #F4CE14;">"""
+            + f"""User</h3><p style="color: #7ED7C1;">{prompt}</p>"""
+            )
+    return_value = (
+            """<h3 style="margin-top: 20px; color: orange;">"""
+            + f"""Assistant</h3>{return_value_clean}"""
+            )
+
     openai_data = {
             "email": current_user.email,
             "assistant_id": assistant_id,
@@ -500,19 +683,33 @@ async def thread_continuation_request_func(prompt):
         }
     return openai_data
 
+
 async def flask_main_new_thread_request_func(prompt):
+    """
+    Handle a request to create a new thread.
+
+    This function processes a request to create a new thread based on the
+    provided prompt.
+
+    Parameters:
+    - prompt (str): Prompt for the new thread.
+
+    Returns:
+    - dict: Constructed data for saving in the database.
+
+    """
     # Update thread timer
-    session["thread_continuation_timer"] = True # Signals new thread created
+    session["thread_continuation_timer"] = True  # Signals new thread created
     check = 0
 
     assistant = await assistant_creator()
-    #MATH_ASSISTANT_ID = assistant.id
     session["assistant_id"] = assistant.id
     thread, run = await create_thread_and_run(assistant.id, prompt)
 
     session["thread_id"] = thread.id
     run = await wait_on_run(run, thread, check)
-    return_value = await extract_openai_message(await get_response(thread, check))
+    return_value = await extract_openai_message(
+            await get_response(thread, check))
     return_value = await clean_content(return_value)
 
     # Replace the backslashes with "&bksl;"
@@ -523,9 +720,15 @@ async def flask_main_new_thread_request_func(prompt):
 
     print(f"\n\nreturn_value = {return_value_clean}")
 
-    prompt =f"""<h3 style="margin-top: 20px; color: #F4CE14;">User</h3><p style="color: #7ED7C1;">{prompt}</p>"""
-    return_value = f"""<h3 style="margin-top: 20px; color: orange;
-">Assistant</h3>{return_value_clean}"""
+    prompt = (
+            """<h3 style="margin-top: 20px; color: #F4CE14;">"""
+            + f"""User</h3><p style="color: #7ED7C1;">{prompt}</p>"""
+            )
+    return_value = (
+            f"""<h3 style="margin-top: 20px; color: orange;">"""
+            + f"""Assistant</h3>{return_value_clean}"""
+            )
+
     openai_data = {
             "email": current_user.email,
             "assistant_id": assistant.id,
@@ -537,7 +740,18 @@ async def flask_main_new_thread_request_func(prompt):
             }
     return openai_data
 
+
 def construct_return_html():
+    """
+    Construct HTML for the response.
+
+    This function constructs HTML by retrieving thread information from
+    the database.
+
+    Returns:
+    - str: Constructed HTML.
+
+    """
     try:
         string = ''
 
@@ -557,42 +771,45 @@ def construct_return_html():
         if threads:
             for thread in threads:
                 string += thread['prompt'] + thread['message']
-            #print(f"\n\nstring = {string}")
+            # print(f"\n\nstring = {string}")
             return string
         return "<p>problem getting solution</p>"
     except Exception as e:
         print(f"construct_return_html Error: {e}")
         return f"""<p style='color: #ff0000;>{e}</p>"""
 
+
 """ flask main function end """
-
-
 """ content sharing routes and functions """
 
-# Route for enabling content sharing
+
 @login_required
 @app.route('/enable_content_sharing', methods=['POST'])
 async def enable_content_sharing():
     """
-    This is the driver route.
-    It calls all the functions involved in enabling content sharing.
-    Retrieves the data from the user's thread and saves it on the
-    database where it will be accessible to all students.
-    It is also responsible for sending emails to the tagged students.
+    Route for enabling content sharing.
+
+    This route serves as the driver for enabling content sharing.
+    It orchestrates various functions to:
+        - Retrieve data from the user's thread.
+        - Save the data in the database, making it accessible to all students.
+        - Handle the process of sending emails to tagged students.
     """
 
     content_title = request.form.get('content_title', None)
     description = request.form.get('description', None)
     tagged_emails = request.form.get('tagged_emails', None)
     thread_id = request.form.get('thread_id', None)
-    #thread_id = "thread_pajTeEykhHCWAz6VTLK0OQSy"
+    # thread_id = "thread_pajTeEykhHCWAz6VTLK0OQSy"
     print(f"\n\n\nthread id = {thread_id}\n\n")
 
     if content_title and len(content_title) > 20:
         message = "Consider a smaller title as the provided one is too large."
         return jsonify({"success": False, "message": message})
     if description and len(description) > 200:
-        message = "Consider a smaller description asthe providedone is too large."
+        message = ("Consider a smaller description asthe provided"
+                   + " one is too large."
+                   )
         return jsonify({"success": False, "message": message})
 
     # Get the thread conversation
@@ -620,7 +837,9 @@ async def enable_content_sharing():
             message = "Shared content set successfully"
             check = 1
         elif result and result == "problem_sending_emails":
-            message = "Shared content set successfully but, a problem occured while sending some emails"
+            message = ("Shared content set successfully but, "
+                       + "a problem occured while sending some emails"
+                       )
             check = 1
         if check:
             return jsonify({"success": True, "message": message})
@@ -638,8 +857,10 @@ async def enable_content_sharing():
 async def get_shared_content():
     print("\n\n Get shared content function called")
     """
-    Receives the requests related to retrieval of the shared content.
-    Shared content will be extracted and sent to the student.
+    Handles requests for retrieving shared content.
+
+    This route processes requests related to the retrieval of shared
+    content. The shared content is extracted and sent to the student.
     """
 
     try:
@@ -669,7 +890,7 @@ async def get_shared_content():
 
         # Use $sample to randomly select documents
         random_documents = collection.aggregate([
-            { "$sample": { "size": desired_count } }
+            {"$sample": {"size": desired_count}}
             ])
 
         # Retrieve titles from the extracted documents
@@ -689,7 +910,17 @@ async def get_shared_content():
 
 async def unlock_content_for_sharing(thread_id):
     """
-    The content the students wants to share will be extracted here.
+    Extracts shared content from the specified thread.
+
+    Args:
+    - thread_id (str): The identifier of the thread containing the
+    shared content.
+
+    Returns:
+    - str: Extracted shared content.
+
+    If the specified thread is found, this function extracts and returns
+    the shared content. Otherwise, it returns "thread_not_found".
     """
 
     try:
@@ -719,6 +950,16 @@ async def unlock_content_for_sharing(thread_id):
 def construct_share_content_intro(content_title, description):
     """
     Generates the introductory part of the shared content.
+
+    Args:
+    - content_title (str): The title of the shared content.
+    - description (str): Description of the shared content.
+
+    Returns:
+    - str: The constructed introductory part of the shared content.
+
+    This function takes the title and description of the shared content
+    and generates the introductory HTML code.
     """
 
     intro = """<h3 style="margin-top: 20px; color: #CFF800;">"""
@@ -733,6 +974,17 @@ def construct_share_content_intro(content_title, description):
 async def send_those_emails(tagged_emails, shared_id):
     """
     Sends emails to the tagged students.
+
+    Args:
+    - tagged_emails (str): Space separated string of tagged student emails.
+    - shared_id (str): Identifier of the shared content.
+
+    Returns:
+    - Union[bool, str]: True if all emails are sent successfully, False
+    otherwise. "no_tagged_emails" if no tagged emails are provided.
+
+    This function extracts emails from the given string, sends codes via
+    email, and returns the success status.
     """
 
     if tagged_emails:
@@ -755,7 +1007,16 @@ async def send_those_emails(tagged_emails, shared_id):
 
 def extract_emails(tagged_emails):
     """
-    Extracts all email addresses from the given text
+    Extracts all email addresses from the given text.
+
+    Args:
+    - tagged_emails (str): Text containing email addresses.
+
+    Returns:
+    - List[str]: List of extracted email addresses.
+
+    This function uses a regular expression to extract and return all
+    email addresses from the given text.
     """
 
     email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -765,8 +1026,22 @@ def extract_emails(tagged_emails):
 
 async def save_shared_content(content_title, shared_content, emails):
     """
-    Shared content is added to the database here.
-    It will be available to all students.
+    Saves shared content in the database and sends emails to tagged
+    students.
+
+    Args:
+    - content_title (str): Title of the shared content.
+    - shared_content (str): The shared content.
+    - emails (str): Comma-separated string of tagged student emails.
+
+    Returns:
+        - Union[bool, str]: True if shared content is saved and emails are
+        sent successfully."no_tagged_emails" if no tagged emails are provided.
+        "problem_sending_emails" if there is an issue while sending emails.
+        False otherwise.
+
+    This function saves the shared content in the database, generates a
+    share id, and sends emails to tagged students.
     """
     try:
         # Connect to the database
@@ -776,7 +1051,7 @@ async def save_shared_content(content_title, shared_content, emails):
         timestamp = int(time.time())
 
         # Add timestamp to the content title for uniqueness
-        content_title = content_title + "©"+ str(timestamp)
+        content_title = content_title + "©" + str(timestamp)
 
         # Generate a share id
         shared_id = generate_random_string()
@@ -809,7 +1084,12 @@ async def save_shared_content(content_title, shared_content, emails):
 def generate_random_string():
     """
     Generates a random string.
-    This string will mostly be used as the share id
+
+    Returns:
+    - str: Randomly generated string.
+
+    This function generates a random string of length 12 containing letters
+    (both uppercase and lowercase) and digits.
     """
 
     characters = string.ascii_letters + string.digits

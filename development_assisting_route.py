@@ -8,6 +8,15 @@ development_blueprint = Blueprint('development_blueprint', __name__)
 
 @development_blueprint.route("/wipe_database", methods=["GET"])
 def wipe_databases():
+    """
+    Endpoint for wiping database collections. Drops collections
+    related to user accounts, openai threads, and thread sequences.
+    Clears the session.
+
+    Returns:
+        jsonify: JSON response indicating the success or failure of the
+        wipe operation.
+    """
     session.clear()
     try:
         # Drop database collections
@@ -18,7 +27,7 @@ def wipe_databases():
         # Invoke db_collections_check()
         if db_collections_check():
             # Create a new testing account
-            #configure_user_account()
+            # configure_user_account()
 
             return jsonify({"message": "wipe success"})
         return jsonify({"message": "wipe failed"})
@@ -27,6 +36,13 @@ def wipe_databases():
 
 
 def configure_user_account():
+    """
+    Configure a testing user account by inserting a document into the
+    "user_account" collection.
+
+    Returns:
+        None
+    """
     # Connect to the MongoDB database
     collection = openai_db["user_account"]
 
@@ -41,7 +57,8 @@ def configure_user_account():
         "accumulating_tokens": 0,
         "lock": False,
         "user_styling": {"font_size": 15, "font_family": "Gruppo",
-                         "text_color": "#29ADB2", "background_color": "#040D12"}
+                         "text_color": "#29ADB2",
+                         "background_color": "#040D12"}
     }
 
     # Insert the document into the collection
@@ -51,9 +68,14 @@ def configure_user_account():
     print("Inserted document ID:", result.inserted_id)
 
 
-
-
 def db_collections_check():
+    """
+    Check if specified collections exist in the MongoDB database.
+
+    Returns:
+        bool: True if all collections are successfully dropped, False
+        otherwise.
+    """
     # Collections to check
     collections_list = ["user_account", "openai_threads", "thread_sequence"]
     db_collections = openai_db.list_collection_names()

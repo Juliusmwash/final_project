@@ -1,53 +1,85 @@
-from flask import Blueprint, request, render_template, session, redirect, url_for, jsonify
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-import asyncio
-
-""" Import app, openai_db, openai_client and development blueprint """
-from extensions import app, openai_db, login_manager
-
-""" Import models and their functions """
-from models_functions import get_user_from_db
-
-""" Import general functions """
-from general_functions import generate_key, hash_password
-
-""" import email functions """
-from email_functions import send_code_by_email
-
 import time
 import pymongo
 import bcrypt
+
+from flask import Blueprint, request, render_template, session
+from fladk import redirect, url_for, jsonify
+from flask_login import LoginManager, login_user, logout_user
+from flask_login import current_user, login_required
+import asyncio
+
+"""
+Import app, openai_db, openai_client and development blueprint
+Import models and their functions
+Import general functions
+import email functions
+"""
+from extensions import app, openai_db, login_manager
+from models_functions import get_user_from_db
+from general_functions import generate_key, hash_password
+from email_functions import send_code_by_email
 
 # Create a Blueprint for register, login, logout related routes
 reg_log_blueprint = Blueprint('reg_log_blueprint', __name__)
 
 
-""" Log in and sign up routes and functions start """
-
-@app.route("/log_reg_template", endpoint="log_reg_endpoint", methods=["GET", "POST"])
+@app.route("/log_reg_template", endpoint="log_reg_endpoint",
+           methods=["GET", "POST"])
 def log_reg_template():
+    """
+    Renders the log_reg_template page with the provided message.
+
+    Returns:
+    - Rendered HTML page with the log_reg_template.
+    """
     return render_template("access.html", message="")
 
 
 @app.route("/login_template", methods=["GET"])
 def login_template():
+    """
+    Renders the login_template page.
+
+    Returns:
+    - Rendered HTML page with the login_template.
+    """
     return render_template("login.html")
 
 
 @app.route("/register_template", methods=["GET"])
 def register_template():
+    """
+    Renders the register_template page.
+
+    Returns:
+    - Rendered HTML page with the register_template.
+    """
     return render_template("register.html")
 
 
 @app.route("/reset_password_template", methods=["GET"])
 def reset_password_template():
+    """
+    Renders the reset_password_template page.
+
+    Returns:
+    - Rendered HTML page with the reset_password_template.
+    """
     return render_template("recover.html")
 
 
 # Registration route
 @app.route('/register', endpoint="register_endpoint", methods=['POST'])
 def process_data():
-    #session.clear()
+    """
+    Processes registration data submitted via the registration form.
+
+    Returns:
+    - If the user is already authenticated, redirects to another page.
+    - If the email already exists in the database, renders an error message.
+    - If successful, saves registration data to the session and redirects
+    to the verification endpoint.
+    """
     if current_user.is_authenticated:
         # User is already logged in, redirect to another page
         return redirect(url_for('/'))
@@ -69,7 +101,6 @@ def process_data():
         message = "The email address you provided is already in use."
         return render_template("access.html", message=message)
 
-
     # Save registration data to the session
     session['reg_details'] = signup_data
 
@@ -80,6 +111,14 @@ def process_data():
 # Verification route
 @app.route('/verify_get', endpoint='verify_get_endpoint', methods=['GET'])
 async def verify_get():
+    """
+    Handles the GET request for the verification route.
+
+    Returns:
+    - If the user is already authenticated, redirects to the index page.
+    - Generates a verification key, sends it via email, and renders the
+    verification details page.
+    """
     if current_user.is_authenticated:
         # User is already logged in, redirect to the index page
         return redirect(url_for('index.html'))
@@ -102,6 +141,15 @@ async def verify_get():
 
 @app.route("/verify_post", methods=["POST"])
 def verify_post():
+    """
+    Handles the POST request for the verification route.
+
+    Returns:
+    - If the elapsed time exceeds 320 seconds, renders an error message
+    for an expired key.
+    - Retrieves and validates the verification key, then proceeds with
+    registration.
+    """
     # Check if the form was submitted within the specified time
     elapsed_time = time.time() - int(session.get('start_time'))
 
@@ -127,7 +175,8 @@ def verify_post():
 
         if result and result != "email_already_in_use":
             # Add the registration activation variable in the session.
-            #   To be used by the '/' route to respond with a reg success message.
+            #   To be used by the '/' route to respond with a reg success
+            #   message.
             session["reg_success"] = True
 
             # Do the redirection
@@ -146,9 +195,16 @@ def verify_post():
     return render_template('access.html', message=message)
 
 
-
 # Function for completing the registration process
 def registration_proceed():
+    """
+    Completes the user registration process.
+
+    Returns:
+    - "email_already_in_use" if the email address is already registered.
+    - True if the registration is successful.
+    - None if an error occurs during the registration process.
+    """
     print("registration proceed called")
     reg_details = session.get('reg_details')
 
@@ -172,7 +228,8 @@ def registration_proceed():
     # Construct user full name
     student_name = first_name + " " + second_name
 
-    # Create an object to store the user details which will be saved in the database
+    # Create an object to store the user details which will be saved
+    #   in the database
     obj = {
             "email": email,
             "password": hashed_password,
@@ -181,14 +238,15 @@ def registration_proceed():
             "accumulating_tokens": 0,
             "lock": False,
             "user_styling": {"font_size": 15, "font_family": "Gruppo",
-                             "text_color": "#29ADB2", "background_color": "#040D12"}
+                             "text_color": "#29ADB2",
+                             "background_color": "#040D12"}
         }
 
     # Confirm there is no user already registered with that email address
     result = collection.find_one({"email": email})
     if result:
         return "email_already_in_use"
-    
+
     # Save these details into the database
     result = collection.insert_one(obj)
 
@@ -208,6 +266,13 @@ def registration_proceed():
 # Login route
 @app.route('/login', endpoint="login_endpoint", methods=['POST'])
 def login():
+    """
+    Handles user login.
+
+    Returns:
+    - Redirects to the index page if the login is successful.
+    - Renders the access.html template with an error message otherwise.
+    """
     if current_user.is_authenticated:
         # User is already logged in, redirect to the index page
         return redirect(url_for('index_endpoint'))
@@ -245,6 +310,12 @@ def login():
 @app.route("/logout", endpoint="logout_endpoint", methods=["GET"])
 @login_required
 def logout():
+    """
+    Handles user logout.
+
+    Returns:
+    - Renders the access.html template with a success message.
+    """
     session.clear()
     logout_user()
     message = "Success bye, see you back soon"
@@ -253,6 +324,12 @@ def logout():
 
 @app.route("/reset_password_process", methods=["POST"])
 async def reset_password_process():
+    """
+    Handles the reset password process.
+
+    Returns:
+    - Renders the verify_reset_code.html template with a reset code.
+    """
     print("reset password called")
     email = request.form.get("email", None)
 
@@ -286,7 +363,6 @@ async def reset_password_process():
             print(f"inserted_id = {result.inserted_id}")
             # Send reset code to the client
             await send_code_by_email(email, reset_code, 2)
-            #if result2:
             return render_template('verify_reset_code.html', key_code=2)
 
         # An error Occured
@@ -296,6 +372,13 @@ async def reset_password_process():
 
 @app.route("/verify_password_reset", methods=["POST"])
 async def verify_password_reset():
+    """
+    Verifies the provided password reset code.
+
+    Returns:
+    - Renders the change_password.html template upon success.
+    - Renders the access.html template with an error message upon failure.
+    """
     reset_code = request.form.get("reset_code", None)
     # Check if the provided reset code match with the one in the database.
     if reset_code:
@@ -317,6 +400,16 @@ async def verify_password_reset():
 
 
 async def confirm_reset_code(reset_code):
+    """
+    Confirms the provided password reset code.
+
+    Args:
+    - reset_code (int): The reset code provided by the user.
+
+    Returns:
+    - dict: {"success": True} upon successful verification.
+            {"success": False, "error": error_message} upon failure.
+    """
     print("confirm reset code called")
     # Variable to keep track of any arising error.
     error = ""
@@ -326,7 +419,8 @@ async def confirm_reset_code(reset_code):
         # Get the reset code saved earlier in the database
         collection = openai_db["key_integrity_check"]
         email = session["email"]
-        reset_data = collection.find_one({"email": email}, sort=[("_id", pymongo.DESCENDING)])
+        reset_data = collection.find_one(
+                {"email": email}, sort=[("_id", pymongo.DESCENDING)])
 
         if reset_data:
             print(f"reset code db = {reset_data['reset_code']}")
@@ -334,7 +428,8 @@ async def confirm_reset_code(reset_code):
                 obj = {
                     "verified": True
                     }
-                result = collection.update_one({"email": session["email"]}, {"$set": obj})
+                result = collection.update_one(
+                        {"email": session["email"]}, {"$set": obj})
                 if result and result.modified_count > 0:
                     print("Reset code process success")
                     success = True
@@ -343,7 +438,9 @@ async def confirm_reset_code(reset_code):
             else:
                 error = "The provided reset code is not correct."
         else:
-            error = "Reset code expired, please begin the password reset process again."
+            error = ("Reset code expired, please begin the password "
+                     + "reset process again."
+                     )
 
     except Exception as e:
         error = e
@@ -352,11 +449,16 @@ async def confirm_reset_code(reset_code):
             return {"success": True}
         return {"success": False, "error": error}
 
-    
 
 # Recovery route
 @app.route('/finalise_password_change', methods=['POST'])
 def reset_password_data():
+    """
+    Finalizes the password change process.
+
+    Returns:
+    - str: HTML content with a success or error message.
+    """
     # Get the username and password from the form data
     new_password = request.form.get("new_password")
 
@@ -386,13 +488,5 @@ def reset_password_data():
         obj = {"password": hashed_password}
         result = collection2.update_one({"email": email}, {"$set": obj})
         if result and result.modified_count > 0:
-            message="Success Sign in with your new password."
+            message = "Success Sign in with your new password."
             return render_template("/access.html", message=message)
-
-
-
-
-
-
-""" Log in and sign up routes and functions end """
-

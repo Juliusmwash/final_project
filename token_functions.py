@@ -5,10 +5,13 @@ from extensions import openai_db
 
 def token_updating_func(current_tokens):
     """
-    The final token calculations are carried out here and saved
-    to the database and in the session as well.
-    This function is being called by the function 'clean_content()'.
-    clean_content() can be found at or close to line number 646.
+    Updates user's token information in the database.
+
+    Args:
+    - current_tokens (str): The number of tokens to be deducted.
+
+    Returns:
+    - str: A message indicating the success or failure of the update.
     """
     try:
         accumulating_tokens = 0
@@ -23,10 +26,10 @@ def token_updating_func(current_tokens):
             session["thread_continuation_timer"] = False
             accumulating_tokens = 0
 
-        #Connect to the database
+        # Connect to the database
         collection = openai_db["user_account"]
         remaining_tokens = None
-        
+
         result = collection.find_one({"email": current_user.email})
         if result:
             total_tokens = int(result["tokens"])
@@ -49,7 +52,8 @@ def token_updating_func(current_tokens):
             session["user_tokens"] = remaining_tokens
 
             # Update document
-            result = collection.update_one({"_id": result["_id"]}, {"$set": value_to_update})
+            result = collection.update_one(
+                    {"_id": result["_id"]}, {"$set": value_to_update})
             # Check if the update was successful
             if result.acknowledged and result.modified_count > 0:
                 return "update successful"
@@ -61,6 +65,15 @@ def token_updating_func(current_tokens):
 
 
 def calculate_old_thread_tokens(thread_id):
+    """
+    Calculate the total tokens used in the specified thread.
+
+    Args:
+    - thread_id (str): The ID of the thread.
+
+    Returns:
+    - tuple: A tuple containing the type of request and the tokens used.
+    """
     try:
         # Connect to the database
         collection = openai_db["openai_threads"]
@@ -83,13 +96,19 @@ def calculate_old_thread_tokens(thread_id):
         return "Error"
 
     except Exception as e:
-        print(f"token_calculations_decider Error = {e} Universal Error Triggered")
+        print(f"token_calculations_decider Error = {e} Universal Error")
         session["previous_thread_request"] = True
         session["UNIVERSAL_ERROR"] = True
         return "Error"
 
 
 def get_remaining_user_tokens():
+    """
+    Get the remaining tokens for the current user.
+
+    Returns:
+    - int: The remaining tokens.
+    """
     try:
         # Connect to the database
         collection = openai_db["user_account"]
@@ -105,4 +124,3 @@ def get_remaining_user_tokens():
     except Exception as e:
         print(f"get_remaining_user_tokens Error = {e}")
         return 0
-

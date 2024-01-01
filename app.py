@@ -13,10 +13,10 @@ import tracemalloc
 import bcrypt
 import asyncio
 
-from flask import Blueprint, Flask, request, render_template, session,
+from flask import Blueprint, Flask, request, render_template, session
 from flask import redirect, url_for, jsonify
-from flask_login import LoginManager, UserMixin, login_user,
-from flask login import login_required, logout_user, current_user
+from flask_login import LoginManager, UserMixin, login_user
+from flask_login import login_required, logout_user, current_user
 from flask.sessions import SecureCookieSessionInterface
 
 """
@@ -37,9 +37,9 @@ from models_functions import get_user_from_db
 from general_functions import openai_threads_messages_save, text_generator
 from general_functions import num_tokens_from_messages, clean_content
 from general_functions import save_thread_number, create_thread_array
-from general_functions import shift_threads, get_thread_data,
+from general_functions import shift_threads, get_thread_data
 from general_functions import get_user_styling_preference
-from general_functions import replace_backslash_latex,
+from general_functions import replace_backslash_latex
 from general_functions import reverse_replace_backslash_latex
 from general_functions import generate_key, hash_password
 from token_functions import token_updating_func, calculate_old_thread_tokens

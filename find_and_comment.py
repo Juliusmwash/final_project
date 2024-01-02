@@ -2,6 +2,17 @@
 import sys
 
 def comment_print_lines(filename, text_to_look_for):
+    """
+    Comment out lines starting with "print(<text_to_look_for>)" in the
+    specified file.
+
+    Args:
+        filename (str): Name of the file to process.
+        text_to_look_for (str): Text to identify lines to be commented.
+
+    Returns:
+        None
+    """
     try:
         with open(filename, 'r') as file:
             lines = file.readlines()

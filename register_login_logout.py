@@ -3,7 +3,7 @@ import pymongo
 import bcrypt
 
 from flask import Blueprint, request, render_template, session
-from fladk import redirect, url_for, jsonify
+from flask import redirect, url_for, jsonify
 from flask_login import LoginManager, login_user, logout_user
 from flask_login import current_user, login_required
 import asyncio
@@ -18,6 +18,7 @@ from extensions import app, openai_db, login_manager
 from models_functions import get_user_from_db
 from general_functions import generate_key, hash_password
 from email_functions import send_code_by_email
+from development_assisting_route import refuse_further_registrations
 
 # Create a Blueprint for register, login, logout related routes
 reg_log_blueprint = Blueprint('reg_log_blueprint', __name__)
@@ -54,6 +55,15 @@ def register_template():
     Returns:
     - Rendered HTML page with the register_template.
     """
+    # Check the number of the registered users for the development sake
+    result = refuse_further_registrations()
+
+    if result:
+        message = ("We're currently in development and not accepting new accounts "
+                   + "at this time. Apologies for any inconvenience."
+                   )
+        return render_template("access.html", message=message)
+
     return render_template("register.html")
 
 

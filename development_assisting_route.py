@@ -92,3 +92,36 @@ def db_collections_check():
             print(f"Failed to drop collection '{collection}'.")
             break
     return success
+
+
+def refuse_further_registrations():
+    """
+    Check if the number of documents in the 'openai_threads' collection exceeds
+    a certain limit.
+
+    Returns:
+        - True: If the document count is greater than or equal to 5, indicating
+        that further registrations should be refused.
+        - False: If the document count is less than 5, indicating that further
+        registrations are allowed.
+        - True: If an exception occurs during the process, with details printed
+        to the console.
+    """
+    try:
+        # Assuming openai_db is a pre-defined MongoDB client and database
+        #   connection
+        collection = openai_db["user_account"]
+
+        # Count documents in the collection
+        document_count = collection.count_documents({})
+        print(f"users available = {document_count}")
+
+        # Check if the document count exceeds the limit
+        if document_count >= 3:
+            return True
+        else:
+            return False
+    except Exception as e:
+        # Print the error details to the console
+        print(f"refuse_further_registrations Error = {e}")
+        return True

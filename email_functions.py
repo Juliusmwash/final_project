@@ -143,8 +143,7 @@ def build_email_body(code, value=0):
     you on board, and we appreciate your decision to create an
     account with us. </p>
 
-    <p>To ensure the security of your account, we need to verify
-    your identity. Please use the following verification code to
+    <p>Please use the following verification code to
     complete the registration process:</p>
 
     <p><span>{code}</span></p>
@@ -166,8 +165,8 @@ def build_email_body(code, value=0):
     <p>We have successfully received your password reset request at ZMC
     Student Assistant.</p>
 
-    <p>We've generated a reset code for you. Please use the
-    following code to complete the password reset process:</p>
+    <p>Please use the following code to complete the password
+    reset process:</p>
 
     <p><span>{code}</span></p>
 

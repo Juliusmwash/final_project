@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		const newCodeButton = document.getElementById('new-code-button');
 
 
-		startCountdown(60); // Starting timer which reflects the server timing logics
+		startCountdown(360); // Starting timer which reflects the server timing logics
 
     // Function to disable input fields after expiration
     function disableInputFields() {

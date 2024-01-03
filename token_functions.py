@@ -3,6 +3,56 @@ from flask_login import current_user
 from extensions import openai_db
 
 
+"""
+ZMC STUDENT ASSISTANT - TOKEN FUNCTIONS MODULE
+
+Module: token_functions.py
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, with Julius Mwangi leading all
+development efforts. For inquiries, concerns, or collaboration requests
+related to user token consumption, please direct them to the provided
+contact email.
+
+---
+
+About
+
+Welcome to the token tracking center of the ZMC Student Assistant - the
+`token_functions.py` module. This module specializes in keeping meticulous
+records of user token consumption, crafted with precision by Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering support
+and guidance. Their influence has been instrumental in shaping my journey
+as a software engineer, particularly in developing efficient token
+tracking functionalities.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your insights and feedback,
+especially regarding token-related operations, are highly valued and
+appreciated!
+
+Happy coding!
+"""
+
+
 def token_updating_func(current_tokens):
     """
     Updates user's token information in the database.

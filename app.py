@@ -50,6 +50,55 @@ from token_functions import get_remaining_user_tokens
 from email_functions import send_code_by_email
 
 
+"""
+ZMC STUDENT ASSISTANT - APP MODULE
+
+Module: app
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, and all development efforts
+are led by Julius Mwangi. Any inquiries, concerns, or
+collaboration requests should be directed to the provided
+contact email.
+
+---
+
+About
+
+Welcome to the heart of the ZMC Student Assistant! This
+module, `app`, serves as the core component, encapsulating
+the brilliance and dedication of Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering
+support and guidance. Their influence has been instrumental in
+shaping my journey as a software engineer, and I express my
+deepest gratitude.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your feedback
+is valuable and appreciated!
+
+Happy coding!
+"""
+
+
 # Start tracing
 tracemalloc.start()
 
@@ -727,7 +776,7 @@ async def flask_main_new_thread_request_func(prompt):
     prompt = (
             """<h3 style="margin-top: 20px; color: #F4CE14;">"""
             + f"""{current_user.student_name}</h3>"""
-            + """<p style="color: #7ED7C1;">{prompt}</p>"""
+            + f"""<p style="color: #7ED7C1;">{prompt}</p>"""
             )
     return_value = (
             f"""<h3 style="margin-top: 20px; color: orange;">"""

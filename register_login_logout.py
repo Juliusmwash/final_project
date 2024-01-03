@@ -12,13 +12,66 @@ import asyncio
 Import app, openai_db, openai_client and development blueprint
 Import models and their functions
 Import general functions
-import email functions
+Import email functions
 """
+
 from extensions import app, openai_db, login_manager
 from models_functions import get_user_from_db
 from general_functions import generate_key, hash_password
 from email_functions import send_code_by_email
 from development_assisting_route import refuse_further_registrations
+
+
+"""
+ZMC STUDENT ASSISTANT - USER AUTHENTICATION MODULE
+
+Module: register_login_logout.py
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, with Julius Mwangi leading all
+development efforts. For inquiries, concerns, or collaboration requests
+related to user authentication, please direct them to the provided
+contact email.
+
+---
+
+About
+
+Welcome to the authentication hub of the ZMC Student Assistant - the
+`register_login_logout.py` module. This module takes charge of seamless
+user experiences, handling registration, login, logout, and password
+recovery logics with finesse, expertly crafted by Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering support
+and guidance. Their influence has been instrumental in shaping my journey
+as a software engineer, particularly in developing robust user
+authentication functionalities.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your insights and feedback,
+especially regarding user authentication flows, are highly valued and
+appreciated!
+
+Happy coding!
+"""
+
 
 # Create a Blueprint for register, login, logout related routes
 reg_log_blueprint = Blueprint('reg_log_blueprint', __name__)
@@ -59,8 +112,9 @@ def register_template():
     result = refuse_further_registrations()
 
     if result:
-        message = ("We're currently in development and not accepting new accounts "
-                   + "at this time. Apologies for any inconvenience."
+        message = ("We're currently in development and not accepting new "
+                   + "accounts at this time. Apologies for any "
+                   + "inconvenience."
                    )
         return render_template("access.html", message=message)
 

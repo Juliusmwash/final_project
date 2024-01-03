@@ -3,6 +3,57 @@ import time
 import re
 
 
+"""
+ZMC STUDENT ASSISTANT - OPENAI FUNCTIONS MODULE
+
+Module: openai_functions.py
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, with Julius Mwangi leading all
+development efforts. For inquiries, concerns, or collaboration requests
+related to OpenAI-powered functions, please direct them to the provided
+contact email.
+
+---
+
+About
+
+Welcome to the magical heart of the ZMC Student Assistant - the
+`openai_functions.py` module. This module orchestrates the wizardry
+behind handling user prompts and generating content through the OpenAI
+assistant, intricately crafted by Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering support
+and guidance. Their influence has been instrumental in shaping my journey
+as a software engineer, particularly in developing the magical
+OpenAI-powered functions.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your insights and feedback,
+especially regarding the enchanting world of OpenAI functionality, are
+highly valued and appreciated!
+
+Happy coding!
+"""
+
+
 # Define function to create an assistant
 async def assistant_creator():
     """

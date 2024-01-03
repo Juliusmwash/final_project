@@ -13,6 +13,57 @@ from flask_login import current_user
 from weasyprint import HTML, CSS
 
 
+"""
+ZMC STUDENT ASSISTANT - GENERAL FUNCTIONS MODULE
+
+Module: general_functions.py
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, with Julius Mwangi leading all
+development efforts. For inquiries, concerns, or collaboration requests
+related to versatile functions across the app, please direct them to the
+provided contact email.
+
+---
+
+About
+
+Welcome to the core of the ZMC Student Assistant - the
+`general_functions.py` module. This module serves as a repository for
+versatile functions that can be utilized across different components of
+the app, skillfully crafted by Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering support
+and guidance. Their influence has been instrumental in shaping my journey
+as a software engineer, contributing to the development of versatile
+functions that enhance various aspects of the app.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your insights and feedback,
+especially regarding the usability and enhancement of these general
+functions, are highly valued and appreciated!
+
+Happy coding!
+"""
+
+
 def generate_pdf_styler_obj(html_content, user_obj=None):
     # print("generate_pdf_styler_obj called")
     """

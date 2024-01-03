@@ -2,6 +2,57 @@ from flask_login import UserMixin
 from extensions import openai_db
 
 
+"""
+ZMC STUDENT ASSISTANT - MODELS FUNCTIONS MODULE
+
+Module: models_functions.py
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, with Julius Mwangi leading all
+development efforts. For inquiries, concerns, or collaboration requests
+related to user model and fetch operations, please direct them to the
+provided contact email.
+
+---
+
+About
+
+Welcome to the core of the ZMC Student Assistant - the
+`models_functions.py` module. This module is dedicated to the user model
+and functions facilitating user fetch operations, meticulously crafted
+by Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering support
+and guidance. Their influence has been instrumental in shaping my journey
+as a software engineer, particularly in developing robust user model and
+fetch functionality.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your insights and feedback,
+especially concerning user-related operations, are highly valued and
+appreciated!
+
+Happy coding!
+"""
+
+
 class UserDetails(UserMixin):
     """
     Represents user details for authentication and tracking purposes.

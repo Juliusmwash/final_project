@@ -5,6 +5,57 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 
+
+"""
+ZMC STUDENT ASSISTANT - EMAIL_FUNCTIONS MODULE
+
+Module: email_functions
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, with Julius Mwangi leading
+all development efforts. Any inquiries, concerns, or collaboration
+requests related to email functionality should be directed to the
+provided contact email.
+
+---
+
+About
+
+Welcome to the core of the ZMC Student Assistant - the `email_functions`
+module. This module houses all the functions essential for sending emails
+to our clients, expertly crafted by Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering support
+and guidance. Their influence has been instrumental in shaping my
+journey as a software engineer, particularly in developing robust email
+functionality.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your expertise and feedback,
+especially concerning email-related features, are highly valued and
+appreciated!
+
+Happy coding!
+"""
+
+
 # Load environment variables from config file
 dotenv_path = os.path.join(os.path.dirname(__file__), 'config.env')
 load_dotenv(dotenv_path)

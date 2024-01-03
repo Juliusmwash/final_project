@@ -1,6 +1,56 @@
 from flask import Blueprint, jsonify, session
 from extensions import openai_db
 
+"""
+ZMC STUDENT ASSISTANT - DEVELOPMENT HELPER MODULE
+
+Module: development.py
+
+Developer: Julius Mwangi
+Contact:
+    - Email: juliusmwasstech@gmail.com
+
+---
+
+Disclaimer:
+This project is a solo endeavor, with Julius Mwangi leading all
+development efforts. For inquiries, concerns, or collaboration requests
+related to development-specific routes and functions, please direct them
+to the provided contact email.
+
+---
+
+About
+
+Welcome to the development playground of the ZMC Student Assistant -
+the `development.py` module. This module houses temporary routes and
+functions designed to aid in the development phase, crafted with
+innovation by Julius Mwangi.
+
+Developer Information
+
+- Name: Julius Mwangi
+- Contact:
+  - Email: [juliusmwasstech@gmail.com]
+            (mailto:juliusmwasstech@gmail.com)
+
+Acknowledgments
+
+Special thanks to the incredible ALX TEAM for their unwavering support
+and guidance. Their influence has been instrumental in shaping my journey
+as a software engineer, particularly in developing efficient tools for
+the development phase.
+
+---
+
+Note to Developers:
+Feel free to explore, contribute, or connect. Your insights and feedback,
+especially regarding development-specific routes and functions, are
+highly valued and appreciated!
+
+Happy coding!
+"""
+
 
 # Create a Blueprint for development-related routes
 development_blueprint = Blueprint('development_blueprint', __name__)

@@ -53,7 +53,7 @@ from email_functions import send_code_by_email
 """
 ZMC STUDENT ASSISTANT - APP MODULE
 
-Module: app
+Module: app.py
 
 Developer: Julius Mwangi
 Contact:
@@ -161,23 +161,23 @@ def update_user_styling():
     try:
         styling_request = request.json
         if styling_request:
-            print("got request")
+            # print("got request")
             user_styling = styling_request.get("user_styling")
             if user_styling:
-                print("extracted value")
+                # print("extracted value")
                 # Connect to the database
                 collection = openai_db["user_account"]
                 email = current_user.email
                 doc = collection.find_one({"email": email})
 
                 if doc:
-                    print("doc found")
+                    # print("doc found")
                     result = collection.update_one(
                             {"_id": doc["_id"]},
                             {"$set": {"user_styling": user_styling}})
 
                     if result.modified_count > 0:
-                        print("update success")
+                        # print("update success")
                         return jsonify({"success": True})
 
         return jsonify({"success": False})
@@ -228,8 +228,8 @@ async def index():
         session["UNIVERSAL_ERROR"] = False
 
     obj = await index_content_generator(decide)
-    print(f"user styling = {obj['user_styling']}")
-    print(f"session thread id = {session['thread_id']}")
+    # print(f"user styling = {obj['user_styling']}")
+    # print(f"session thread id = {session['thread_id']}")
 
     return render_template(
             "index.html", tokens_count=obj["tokens_count"],
@@ -252,13 +252,13 @@ async def index_content_generator(decide=0):
 
     """
     user_styling = await get_user_styling_preference(current_user.email)
-    print(f"\n\ncurrent_user = {current_user.email}\n\n")
+    # print(f"\n\ncurrent_user = {current_user.email}\n\n")
     threads = []
     tokens_count = 0
     obj_data = {}
 
     if not threads:
-        print("not threads")
+        # print("not threads")
         session["assistant_id"] = ""
         session["thread_id"] = ""
 
@@ -270,12 +270,12 @@ async def index_content_generator(decide=0):
     if check:
         obj_data = await thread_decider_func(
                 "most_recent_thread")
-        print("session not empty")
+        # print("session not empty")
     else:
-        print("creating a new thread")
+        # print("creating a new thread")
         obj_data = await thread_decider_func("new_thread")
 
-    print(f"\n\nobj = {str(obj_data)}")
+    # print(f"\n\nobj = {str(obj_data)}")
 
     obj = {
         "tokens_count": tokens_count,
@@ -298,7 +298,7 @@ async def check_thread_availability():
     """
     try:
         email = current_user.email
-        print(f"check_thread_availability email = {email}")
+        # print(f"check_thread_availability email = {email}")
 
         # Connect to the database
         collection = openai_db["thread_sequence"]
@@ -312,10 +312,11 @@ async def check_thread_availability():
             # Set the session variables
             session["thread_id"] = thread["thread_id"]
             session["assistant_id"] = thread["assistant_id"]
-            print("check_thread_availability True")
+            # print("check_thread_availability True")
             return True
         else:
-            print("check_thread_availability problem getting thread")
+            # print("check_thread_availability problem getting thread")
+            pass
         return False
     except Exception as e:
         print(f"check_thread_availability Error = {e}")
@@ -361,7 +362,7 @@ async def zmc_assistant_data():
         prompt = request.form.get('prompt')
         thread_choice = request.form.get('thread_choice')
         info_request = request.form.get('program_info', None)
-        print(f"thread_choice = {thread_choice}")
+        # print(f"thread_choice = {thread_choice}")
 
         # Call thread_decider_func()
         if thread_choice:
@@ -383,7 +384,7 @@ async def zmc_assistant_data():
                                 "response_text": obj["response_text"]})
 
         if thread_status == "new":
-            print("making new thread, thread status is new")
+            # print("making new thread, thread status is new")
             # Call new_thread_request_func()
             obj = await new_thread_request_func(prompt, thread_status)
             if obj["success"]:
@@ -394,7 +395,7 @@ async def zmc_assistant_data():
 
         # Check if it is a thread change call
         if thread_num != "0":
-            print("thread num is not 0, so old thread invoked")
+            # print("thread num is not 0, so old thread invoked")
             # Call old_thread_request_func()
             obj = await old_thread_request_func(thread_num)
             if obj["success"]:
@@ -410,10 +411,10 @@ async def zmc_assistant_data():
             if image_file:
                 if prompt:
                     prompt = prompt + text_generator(image_file)
-                    print(f"IMAGE TEXT = {str(prompt)}")
+                    # print(f"IMAGE TEXT = {str(prompt)}")
                 else:
                     prompt = text_generator(image_file)
-                    print(f"IMAGE TEXT = {str(prompt)}")
+                    # print(f"IMAGE TEXT = {str(prompt)}")
 
         result = await flask_main(prompt, thread_status)
         # Get updated token count from the session. Already there is a
@@ -435,7 +436,7 @@ async def zmc_assistant_data():
 
 async def thread_decider_func(thread_choice):
     if thread_choice == "new_thread":
-        print("making new thread, thread status is new")
+        # print("making new thread, thread status is new")
         # Call new_thread_request_func()
         obj = await new_thread_request_func("new thread", "new")
         if obj["success"]:
@@ -493,7 +494,7 @@ async def info_request_func():
             for obj in result:
                 # print(f"string = {str(obj.get('program_intro'))}")
                 raw_program_info = r"{}".format(obj.get("program_intro"))
-                print(raw_program_info)
+                # print(raw_program_info)
                 tokens = session.get("user_tokens", 0)
                 if not tokens:
                     tokens = get_remaining_user_tokens()
@@ -580,7 +581,7 @@ async def old_thread_request_func(thread_num):
         tokens = get_remaining_user_tokens()
         session["user_tokens"] = tokens
     tokens = f"{tokens:,}"
-    print(f"\n\n{tokens}\n\n")
+    # print(f"\n\n{tokens}\n\n")
 
     # Signal a previous thread has being requested for
     session["previous_thread_request"] = True
@@ -620,8 +621,6 @@ async def program_info_func():
         # Connect to MongoDB
         collection = openai_db['program_intro']
 
-        print("called")
-
         # Retrieve all documents from MongoDB
         document = collection.find_one({}, {"_id": 0})
 
@@ -650,7 +649,7 @@ async def flask_main(prompt, thread_status):
     - str: Constructed HTML for the response.
 
     """
-    print(f"thread status = {thread_status}")
+    # print(f"thread status = {thread_status}")
     return_value = ""
     check = 0
     openai_data = None
@@ -661,15 +660,15 @@ async def flask_main(prompt, thread_status):
     # Save this value to the session for later retrieval
     session["instruction_prompt_tokens"] = prompt_token
 
-    print(f"\n\n prompt tokens = {prompt_token}\n\n")
+    # print(f"\n\n prompt tokens = {prompt_token}\n\n")
 
     if thread_status == "active" and "assistant_id" in session and session[
             "assistant_id"]:
-        print("Using session data, thread status is active")
+        # print("Using session data, thread status is active")
         # Call thread_continuation_request_func()
         openai_data = await thread_continuation_request_func(prompt)
     else:
-        print("flask main creating new thread")
+        # print("flask main creating new thread")
         # Call flask_main_new_thread_request_func()
         openai_data = await flask_main_new_thread_request_func(prompt)
 
@@ -696,9 +695,9 @@ async def thread_continuation_request_func(prompt):
     """
     # Update thread timer
     session["thread_continuation_timer"] = False  # Signals thread continuation
-    print(f"thread_continuation_request_func prompt = {prompt}")
+    # print(f"thread_continuation_request_func prompt = {prompt}")
 
-    print("Using session assistant and thread")
+    # print("Using session assistant and thread")
     assistant_id = session["assistant_id"]
     thread_id = session["thread_id"]
     check = 1
@@ -712,7 +711,7 @@ async def thread_continuation_request_func(prompt):
     return_value_clean = await replace_backslash_latex(return_value)
     # Get the number of tokens consumed by the message from this call
     message_tokens = session.get("currently_used_tokens", 0)
-    print(f"\n\nreturn_value = {return_value_clean}")
+    # print(f"\n\nreturn_value = {return_value_clean}")
 
     # Define an odject to save in the database
     prompt = (
@@ -771,7 +770,7 @@ async def flask_main_new_thread_request_func(prompt):
     # Get the number of tokens consumed by the message from this call
     tokens_consumed = session.get("currently_used_tokens", 0)
 
-    print(f"\n\nreturn_value = {return_value_clean}")
+    # print(f"\n\nreturn_value = {return_value_clean}")
 
     prompt = (
             """<h3 style="margin-top: 20px; color: #F4CE14;">"""
@@ -820,7 +819,7 @@ def construct_return_html():
 
         # Execute the query
         threads = collection.find(query)
-        print(threads)
+        # print(threads)
 
         if threads:
             for thread in threads:
@@ -855,7 +854,7 @@ async def enable_content_sharing():
     tagged_emails = request.form.get('tagged_emails', None)
     thread_id = request.form.get('thread_id', None)
     # thread_id = "thread_pajTeEykhHCWAz6VTLK0OQSy"
-    print(f"\n\n\nthread id = {thread_id}\n\n")
+    # print(f"\n\n\nthread id = {thread_id}\n\n")
 
     if content_title and len(content_title) > 20:
         message = "Consider a smaller title as the provided one is too large."
@@ -868,7 +867,7 @@ async def enable_content_sharing():
 
     # Get the thread conversation
     conversation = await unlock_content_for_sharing(thread_id)
-    print(f"\n\nconversation = {conversation}\n\n")
+    # print(f"\n\nconversation = {conversation}\n\n")
 
     if conversation != "thread_not_found" and conversation != "error":
         # construct share content introduction
@@ -909,7 +908,7 @@ async def enable_content_sharing():
 @app.route('/get_shared_content', methods=["POST"])
 @login_required
 async def get_shared_content():
-    print("\n\n Get shared content function called")
+    # print("\n\n Get shared content function called")
     """
     Handles requests for retrieving shared content.
 
@@ -993,12 +992,12 @@ async def generate_pdf_route():
             html_content = pdf_header + construct_return_html()
             obj = generate_pdf_styler_obj(html_content)
             pdf_path = await code_to_pdf(obj)
-            print(f"pdf name = {pdf_path}")
+            # print(f"pdf name = {pdf_path}")
         else:
             html_content = pdf_header + construct_return_html()
             obj = generate_pdf_styler_obj(html_content, obj)
             pdf_path = await code_to_pdf(obj)
-            print(f"pdf name = {pdf_path}")
+            # print(f"pdf name = {pdf_path}")
 
         # Return the PDF as a downloadable file
         with open(pdf_path, 'rb') as pdf_file:
@@ -1046,10 +1045,10 @@ async def unlock_content_for_sharing(thread_id):
 
         if result:
             for doc in result:
-                print(f"""\nprompt = {doc["prompt"]}\n""")
+                # print(f"""\nprompt = {doc["prompt"]}\n""")
                 content = doc["prompt"] + doc["message"]
                 thread_messages = thread_messages + content
-            print(f"\n\nShared Content = {thread_messages}\n\n")
+            # print(f"\n\nShared Content = {thread_messages}\n\n")
             return thread_messages
         return "thread_not_found"
 

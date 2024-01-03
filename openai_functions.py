@@ -1,6 +1,7 @@
 from extensions import openai_client as client
 import time
 import re
+from flask_login import current_user
 
 
 """
@@ -62,15 +63,11 @@ async def assistant_creator():
     Returns:
     - OpenAI Assistant: Instance of the created assistant.
     """
-    rules = ("Ouput content in html format and use p tags only."
-             + "Avoid using newline characters; use <p> tags instead."
-             + "Even for a single line, enclose it within <p> tags."
-             + "Assist on all queries.If equations are involved use "
-             + "LaTeX syntax.If 'new thread' is issued as a prompt, "
-             + "reply with '<p>Thread created, how can I assist you?</p>'."
+    rules = ("Use laTEX syntax if equations are involved."
+             + "If 'new thread' is given as the prompt reply with "
+             + f"'Hi {current_user.student_name}, how can I assist you?'"
              )
 
-    print("assistant here")
     assistant = client.beta.assistants.create(
         name="ZMC STUDENT ASSISTANT",
         instructions=rules,
@@ -205,8 +202,8 @@ async def extract_openai_message(messages):
         # Access the newest message
         latest_message = messages.data[0]
         latest = re.sub(r'\\\\', r'\\', str(latest_message.content))
-
         return latest
+
     return False
 
 

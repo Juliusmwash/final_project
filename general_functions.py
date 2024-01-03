@@ -410,8 +410,16 @@ async def clean_content(input_content):
             # Update user tokens
             token_updating_func(total_tokens_count)
 
+            # cleaned_content = second_content.replace(
+            # '\n', '').replace('\\n', '')
+
             cleaned_content = first_content.replace(
-                    '\n', '').replace('\\n', '')
+                    "\n", "<br>").replace(
+                            "\\n", "<br>").replace(
+                                    "\\'", "'").replace('\\"', '"')
+
+            # print(f"\n\nCleaned content func = {cleaned_content}\n\n")
+
             return cleaned_content
 
     # Return the original content if substrings are not found

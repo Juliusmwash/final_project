@@ -1,5 +1,9 @@
 # ZMC Student Assistant
 
+## License
+
+This project is licensed under the [GNU Affero General Public License v3.0](LICENSE) - see the [LICENSE](LICENSE) file for details.
+
 ## Overview
 
 The ZMC Student Assistant is a project designed to enhance students' learning experience by providing interactive communication and support. The primary goal is to make education enjoyable and efficient for users.

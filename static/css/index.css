@@ -509,7 +509,8 @@ label {
 #change-background-btn,
 .program-info-btn,
 .user-styling-button,
-.reveal-share-box-button {
+.reveal-share-box-button,
+.download-pdf-button {
   width: 100%;
   display: flex;
   justify-content: center;

@@ -8,7 +8,157 @@ from token_functions import token_updating_func
 import pymongo
 import random
 import bcrypt
+import re
 from flask_login import current_user
+from weasyprint import HTML, CSS
+
+
+def generate_pdf_styler_obj(html_content, user_obj=None):
+    # print("generate_pdf_styler_obj called")
+    """
+    Generates a styling object for PDF creation.
+
+    Args:
+        html_content (str): HTML content to be included in the PDF.
+
+    Returns:
+        dict: Styling object with parameters for PDF generation.
+
+    """
+    pdf_name = current_user.email + str(generate_key()) + ".pdf"
+
+    obj = {
+        "lt_spacing": "2px",
+        "margin": "1cm",
+        "bg_color": "#000134",
+        "font_size": "36px",
+        "html_content": html_content,
+        "output_filename": pdf_name,
+        "text_color": "brown"
+    }
+
+    if user_obj:
+        obj["lt_spacing"] = str(user_obj["letter_spacing"]) + "px"
+        obj["font_size"] = str(user_obj["font_size"]) + "px"
+        obj["text_color"] = user_obj["text_color"]
+        obj["bg_color"] = user_obj["background_color"]
+
+    return obj
+
+
+async def code_to_pdf(obj):
+    """
+    Converts HTML content to a PDF file with specified styling.
+
+    Args:
+        obj (dict): Styling object containing parameters for PDF generation.
+
+    Returns:
+        str: Filename of the generated PDF.
+
+    """
+    custom_css = f"""
+
+    * {{
+        letter-spacing: {obj["lt_spacing"]};
+        font-size: {obj["font_size"]};
+        color: {obj["text_color"]};
+        white-space: pre-wrap;
+    }}
+    #zmc_header {{
+        font-size: 20px;
+        color: gold;
+    }}
+    @page {{
+        size: Letter;
+        margin: {obj["margin"]};
+        background-color: {obj["bg_color"]};/* Add your desired gray color */
+    }}
+    """
+
+    # Convert HTML to PDF using WeasyPrint with inline CSS
+    HTML(string=obj["html_content"]).write_pdf(
+            obj["output_filename"], stylesheets=[CSS(string=custom_css)])
+
+    return obj["output_filename"]
+
+
+def validate_pdf_request_data(obj):
+    """
+    Validate and sanitize PDF request data.
+
+    This function checks and adjusts the values in the provided
+    dictionary object to ensure they meet certain criteria for
+    letter spacing, font size, background color, and text color.
+
+    Parameters:
+    - obj (dict): A dictionary containing PDF request data with the
+    following keys:
+        - "letter_spacing" (float or int): Desired letter spacing
+            (0.5 to 3).
+        - "font_size" (int): Desired font size (10 to 30).
+        - "background_color" (str): Background color in hex format
+            (e.g., "#1a2b3c").
+        - "text_color" (str): Text color in hex format
+            (e.g., "#1a2b3c").
+
+    Returns:
+    - dict: A validated and sanitized dictionary object.
+
+    Note:
+    - If a value is invalid, it will be adjusted to a default value.
+    - If an exception occurs during the validation process, the
+        function returns False.
+    """
+    try:
+        if obj["letter_spacing"]:
+            num = float(obj["letter_spacing"])
+            if num < 0.5 or num > 3:
+                obj["letter_spacing"] = 1
+
+        if obj["font_size"]:
+            num = float(obj["font_size"])
+            if num < 10 or num > 30:
+                obj["font_size"] = 10
+
+        if obj["page_margins"]:
+            num = float(obj["page_margins"])
+            if num < 0.5 or num > 2:
+                obj["page_margins"] = 1
+
+        if obj["background_color"]:
+            code = obj["background_color"]
+            check = is_valid_hex_color(code)
+            if not check:
+                obj["background_color"] = "#FFF"
+
+        if obj["text_color"]:
+            code = obj["text_color"]
+            check = is_valid_hex_color(code)
+            if not check:
+                obj["text_color"] = "black"
+
+        return obj
+    except Exception as e:
+        print(f"validate_pdf_request_data Error = {e}")
+        return False
+
+
+def is_valid_hex_color(code):
+    """
+    Check if a given string is a valid hex color code.
+
+    Parameters:
+    - code (str): The input string to check.
+
+    Returns:
+    - bool: True if the string is a valid hex color code, False otherwise.
+    """
+    # Define the regular expression pattern for a valid hex color code
+    pattern = re.compile(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')
+
+    # Check if the provided code matches the pattern
+    return bool(pattern.match(code))
 
 
 async def get_user_styling_preference(email):

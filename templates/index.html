@@ -20,14 +20,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
 		<link href="https://fonts.googleapis.com/css2?family=Kalnia&display=swap" rel="stylesheet">
-			<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 		<!-- MathJax -->
 		<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="../static/css/image_style.css" />
     <link rel="stylesheet" href="../static/css/index.css">
-		<link rel="stylesheet" href="../static/css/decide.css">
+		<link rel="stylesheet" href="../static/css/index-pdf-download.css">
+		<!--<link rel="stylesheet" href="../static/css/decide.css">-->
     <link rel="stylesheet" href="../static/css/page_loader.css">
 		<link rel="stylesheet" href="../static/css/content_share.css">
     <title>ZMC STUDENT ASSISTANT</title>
@@ -102,6 +103,7 @@
 						</div>
 					</div>
 					<!-- Share section end -->
+
     </header>
 		<span id="thread-id-holder" style="display: none;"></span>
 
@@ -157,6 +159,7 @@
 						<div id="change-background-btn">background</div>
 						<div class="user-styling-button">save my styles</div>
 						<div class="reveal-share-box-button">content sharing</div>
+						<div class="download-pdf-button">download pdf</div>
 					</div>
 
 
@@ -168,6 +171,58 @@
 						</div>
 						<div class="okay">ok</div>
 					</div>
+
+
+
+					<!-- pdf download section -->
+					<div class="pdf-download-container">
+						<div class="pdf-loading-box" style="display: none;">
+							<div id="pdf-load-tmp-holder" style="display: flex;">please wait, don't exit</div>
+							<div class="pdf-loading-dots">
+								<span class="pdf-loading-dot"></span>
+								<span class="pdf-loading-dot"></span>
+								<span class="pdf-loading-dot"></span>
+							</div>
+						</div>
+
+						<div class="download-box">
+							<form action="/generate_pdf_route" method="POST" id="default-pdf-form">
+								<input type="hidden" name="default_pdf" value="okay"/>
+							</form>
+							<button class="pdf-download-btn" type="submit" id="download-btn">download</button>
+							<button class="pdf-download-btn"  id="advanced-btn">advanced</button>
+						</div>
+						<div class="advanced-box" style="display: none;">
+							<form action="/generate_pdf_route" method="POST" id="custom-pdf-form">
+								<label class="pdf-input-label">letter spacing</label>
+								<input type="number" class="pdf-input" name="letter_spacing">
+
+								<label class="pdf-input-label">font size</label>
+								<input type="number" class="pdf-input" name="font_size">
+
+								<label class="pdf-input-label">page margins</label>
+								<input type="number" class="pdf-input" name="page_margins">
+
+								<label class="pdf-input-label">background color</label>
+								<input type="text" class="pdf-input" name="background_color">
+
+								<label class="pdf-input-label">text colour</label>
+								<input type="text" class="pdf-input" name="text_color">
+							</form>
+							<button class="pdf-download-btn" type="submit" id="download-advanced-btn">download</button>
+						</div>
+						<button type="button" id="pdf-exit-btn">exit</button>
+					</div>
+					<!-- pdf download sectiom end -->
+
+
+
+
+
+
+
+
+
 
 
 					<!-- colour changer -->
@@ -294,8 +349,7 @@
             </div>
 						<a href="/logout" id="logout-btn" style="display: none;"></a>
             <div class="generator-box" style="display: block;">
-							<p>Welcome to <span style="color: lime;">ZMC Student Assistant!</span> I'm here to enhance your understanding of various subjects.</p>
-							<!--<p>Proper use can lead to <span style="color: orange;">academic success</span>, but <span style="color: #FF0000;">misusing</span> me as a mere shortcut may hinder your career.</p><p>I encourage you to engage with the content I provide for <span style="color: lime;">optimal educational benefits</span>.</p><p>Feel free to ask questions on any subject, and I'll help you grasp the concepts. <span style="color: lime;">Use me wisely</span>, and I'll contribute to your educational journey positively.</p><p>Remember, success in your studies comes from active learning. <span style="color: orange;">Don't just seek quick answers</span>; take the time to comprehend the material.</p><p>Utilize me as a resource for <span style="color: lime;">clarification</span> and <span style="color: lime;">"deeper understanding</span> rather than a <span style="color: #FF0000;">shortcut for assignments</span>.</p><p>Your education is a valuable investment, and thoughtful use of this assistant can significantly impact your academic growth.</p><p>Happy learning!</p>-->
+							<p>Welcome to <span style="color: lime;">ZMC Student Assistant!</span> I'm here to enhance your understanding of various subjects.</p><p>Proper use can lead to <span style="color: orange;">academic success</span>, but <span style="color: #FF0000;">misusing</span> me as a mere shortcut may hinder your career.</p><p>I encourage you to engage with the content I provide for <span style="color: lime;">optimal educational benefits</span>.</p><p>Feel free to ask questions on any subject, and I'll help you grasp the concepts. <span style="color: lime;">Use me wisely</span>, and I'll contribute to your educational journey positively.</p><p>Remember, success in your studies comes from active learning. <span style="color: orange;">Don't just seek quick answers</span>; take the time to comprehend the material.</p><p>Utilize me as a resource for <span style="color: lime;">clarification</span> and <span style="color: lime;">"deeper understanding</span> rather than a <span style="color: #FF0000;">shortcut for assignments</span>.</p><p>Your education is a valuable investment, and thoughtful use of this assistant can significantly impact your academic growth.</p><p>Happy learning!</p>
 
             </div>
         </div>
@@ -310,14 +364,16 @@
 			const userStyling = {{ user_styling | tojson | safe }};
 			const threadIdentity = {{ thread_id | tojson | safe }};
 
-			alert(`obj = ${JSON.stringify(obj.response_text)}`);
-
 			// Set some global variables
 			let fontSize = 14;
 			let choiceColor;
-			let fontFamily = "Roboto";
+			let fontFamily = "Gruppo";
 			let choiceBackground;
 			const threadsDataSequence = obj.threads;
+
+
+			document.addEventListener('DOMContentLoaded', async () => {
+			//alert(`obj = ${JSON.stringify(obj.response_text)}`);
 
 			if (userStyling) {
         // Set values for the global variables
@@ -325,8 +381,7 @@
         fontFamily = userStyling.font_family;
         choiceColor = userStyling.text_color;
         choiceBackground = userStyling.background_color;
-
-        adjustToUserStyling();
+        await adjustToUserStyling();
       }
 
 			if (threadIdentity) {
@@ -335,19 +390,19 @@
 				threadIdHolder.textContent = threadIdentity;
 			}
 
-			function loadGeneratorElementData(obj) {
+			/*async function loadGeneratorElementData(obj) {
 				if (obj && obj.success) {
 					const generatorBox = document.querySelector('.generator-box');
 					// Replace all occurrences of "&bksl;" with a backslash
 					const inputString = obj.response_text;
 					const outputString = inputString.replace(/&bksl;/g, "\\");
 					generatorBox.innerHTML = outputString;
-					adjustToUserStyling();
+					await adjustToUserStyling();
 				}
-			}
+			}*/
 
 
-			function adjustToUserStyling() {
+			async function adjustToUserStyling() {
 				// Reset font styles
 				const elementsToStyle = ['p', 'ul', 'li', 'span', '.generator-box'];
 				elementsToStyle.forEach((selector) => {
@@ -364,7 +419,7 @@
 							element.style.color = choiceColor;
 							element.style.backgroundColor = choiceBackground;
 						}
-				  }); // <-- Add a closing parenthesis here
+				  });
 				});
 			}
 
@@ -380,11 +435,30 @@
 				tokensCounter.textContent = 0;
 			}
 
+			async function loadThreadInTheBox(obj) {
+				const generatorBox = document.querySelector('.generator-box');
+
+				// Replace all occurrences of "&bksl;" with a backslash
+				const inputString = obj.response_text;
+				const outputString = inputString.replace(/&bksl;/g, "\\");
+
+				setTimeout(async () => {
+					generatorBox.innerHTML = outputString;
+					await adjustToUserStyling();
+				}, 20000);
+			}
+
+			if (obj) {
+				await loadThreadInTheBox(obj);
+			}
+
       // Trigger MathJax rendering
       MathJax.typeset();
+			});
     </script>
     <script src="../static/js/image_script.js"></script>
 		<script src="../static/js/content_share.js"></script>
+		<script src="../static/js/index-pdf-download.js"></script>
 </body>
 </html>
 

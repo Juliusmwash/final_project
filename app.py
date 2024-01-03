@@ -14,10 +14,11 @@ import bcrypt
 import asyncio
 
 from flask import Blueprint, Flask, request, render_template, session
-from flask import redirect, url_for, jsonify
+from flask import redirect, url_for, jsonify, Response
 from flask_login import LoginManager, UserMixin, login_user
 from flask_login import login_required, logout_user, current_user
 from flask.sessions import SecureCookieSessionInterface
+from weasyprint import HTML, CSS
 
 """
 Import app, openai_db, openai_client and blueprints
@@ -42,6 +43,8 @@ from general_functions import get_user_styling_preference
 from general_functions import replace_backslash_latex
 from general_functions import reverse_replace_backslash_latex
 from general_functions import generate_key, hash_password
+from general_functions import generate_pdf_styler_obj, code_to_pdf
+from general_functions import validate_pdf_request_data
 from token_functions import token_updating_func, calculate_old_thread_tokens
 from token_functions import get_remaining_user_tokens
 from email_functions import send_code_by_email
@@ -665,7 +668,8 @@ async def thread_continuation_request_func(prompt):
     # Define an odject to save in the database
     prompt = (
             """<h3 style="margin-top: 20px; color: #F4CE14;">"""
-            + f"""User</h3><p style="color: #7ED7C1;">{prompt}</p>"""
+            + f"""{current_user.student_name}</h3>"""
+            + f"""<p style="color: #7ED7C1;">{prompt}</p>"""
             )
     return_value = (
             """<h3 style="margin-top: 20px; color: orange;">"""
@@ -722,7 +726,8 @@ async def flask_main_new_thread_request_func(prompt):
 
     prompt = (
             """<h3 style="margin-top: 20px; color: #F4CE14;">"""
-            + f"""User</h3><p style="color: #7ED7C1;">{prompt}</p>"""
+            + f"""{current_user.student_name}</h3>"""
+            + """<p style="color: #7ED7C1;">{prompt}</p>"""
             )
     return_value = (
             f"""<h3 style="margin-top: 20px; color: orange;">"""
@@ -906,6 +911,63 @@ async def get_shared_content():
     except Exception as e:
         print(f"get_shared_content Error = {e}")
         return jsonify({"success": False, "message": e})
+
+
+@app.route("/generate_pdf_route", methods=["POST"])
+async def generate_pdf_route():
+    # print("\n\n\ngenerate_pdf_route called\n\n\n")
+    try:
+        obj = {}
+        pdf_path = None
+
+        default_pdf = request.form.get("default_pdf", None)
+        obj["letter_spacing"] = request.form.get("letter_spacing", None)
+        obj["font_size"] = request.form.get("font_size", None)
+        obj["text_color"] = request.form.get("text_color", None)
+        obj["page_margins"] = request.form.get("page_margins", None)
+        obj["background_color"] = request.form.get("background_color", None)
+
+        # Validate user input
+        result = validate_pdf_request_data(obj)
+
+        pdf_header = ("""<h1 style="color: lime; font-size: 24px;">"""
+                      + """ZMC STUDENT ASSISTANT</h1>"""
+                      + """<p style="color: lime;">"""
+                      + """Developer: Julius Mwangi</p>"""
+                      + """<p style="color: lime;">"""
+                      + """Contact: juliusmwasstech@gmail.com</p>"""
+                      + """<p style="color: lime;"""
+                      + """margin-bottom: 150px;">Happy learning</p>"""
+                      )
+
+        if not result or default_pdf:
+            html_content = pdf_header + construct_return_html()
+            obj = generate_pdf_styler_obj(html_content)
+            pdf_path = await code_to_pdf(obj)
+            print(f"pdf name = {pdf_path}")
+        else:
+            html_content = pdf_header + construct_return_html()
+            obj = generate_pdf_styler_obj(html_content, obj)
+            pdf_path = await code_to_pdf(obj)
+            print(f"pdf name = {pdf_path}")
+
+        # Return the PDF as a downloadable file
+        with open(pdf_path, 'rb') as pdf_file:
+            response = Response(pdf_file.read(),
+                                content_type='application/pdf')
+            filename = ("zmc_student_assistant"
+                        + str(generate_key()) + ".pdf"
+                        )
+            fname = f"inline; filename={filename}"
+            response.headers['Content-Disposition'] = fname
+
+        # Delete the PDF file immediately after sending
+        os.remove(pdf_path)
+
+        return response
+    except Exception as e:
+        print(f"generate_pdf_route Error = {e}")
+        return jsonify({"message": "error"})
 
 
 async def unlock_content_for_sharing(thread_id):

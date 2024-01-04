@@ -182,59 +182,71 @@ programInfoBtn.addEventListener('click', async () => {
 
 
 
-document.querySelector('.increment').addEventListener('click', () => {
+document.querySelector(
+'.increment').addEventListener('click', () => {
   updateCounter(1);
 });
 
-document.querySelector('.decrement').addEventListener('click', () => {
+document.querySelector(
+'.decrement').addEventListener('click', () => {
   updateCounter(-1);
 });
 
-document.querySelector('.increment').addEventListener('mousedown', () => {
+document.querySelector(
+'.increment').addEventListener('mousedown', () => {
   interval = setInterval(() => {
     updateCounter(1);
   }, 150);
 });
 
-document.querySelector('.increment').addEventListener('mouseup', () => {
+document.querySelector(
+'.increment').addEventListener('mouseup', () => {
   clearInterval(interval);
 });
 
-document.querySelector('.increment').addEventListener('touchstart', () => {
+document.querySelector(
+'.increment').addEventListener('touchstart', () => {
   interval = setInterval(() => {
     updateCounter(1);
   }, 150);
 });
 
-document.querySelector('.increment').addEventListener('touchend', () => {
+document.querySelector(
+'.increment').addEventListener('touchend', () => {
   clearInterval(interval);
 });
 
-document.querySelector('.increment').addEventListener('touchcancel', () => {
+document.querySelector(
+'.increment').addEventListener('touchcancel', () => {
   clearInterval(interval);
 });
 
-document.querySelector('.decrement').addEventListener('mousedown', () => {
+document.querySelector(
+'.decrement').addEventListener('mousedown', () => {
   interval = setInterval(() => {
     updateCounter(-1);
   }, 150);
 });
 
-document.querySelector('.decrement').addEventListener('mouseup', () => {
+document.querySelector(
+'.decrement').addEventListener('mouseup', () => {
   clearInterval(interval);
 });
 
-document.querySelector('.decrement').addEventListener('touchstart', () => {
+document.querySelector(
+'.decrement').addEventListener('touchstart', () => {
   interval = setInterval(() => {
     updateCounter(-1);
   }, 150);
 });
 
-document.querySelector('.decrement').addEventListener('touchend', () => {
+document.querySelector(
+'.decrement').addEventListener('touchend', () => {
   clearInterval(interval);
 });
 
-document.querySelector('.decrement').addEventListener('touchcancel', () => {
+document.querySelector(
+'.decrement').addEventListener('touchcancel', () => {
   clearInterval(interval);
 });
 
@@ -246,7 +258,16 @@ function updateCounter(value) {
     currentCount += value;
     counterElement.textContent = currentCount;
     counterCheck += value;
-    document.querySelector('.generator-box').style.fontSize = counterCheck + "px";
+
+    const generatorBox = document.querySelector(
+      '.generator-box');
+    const spanElements = generatorBox.querySelectorAll('span');
+
+    generatorBox.style.fontSize = counterCheck + "px";
+    spanElements.forEach((element) => {
+      element.style.fontSize = counterCheck + "px";
+    });
+
     document.querySelectorAll('p').forEach((element) => {
       fontSize = counterCheck;
       element.style.fontSize = counterCheck + "px";
@@ -270,13 +291,26 @@ function setTimeoutFunc() {
 }
 
 
-const changeOtherBtn = document.getElementById('change-other-btn');
+const changeOtherBtn = document.getElementById(
+'change-other-btn');
+
 changeOtherBtn.addEventListener('click', () => {
-  document.querySelector('.font-dropdown-box').style.display = "none";
-  document.querySelector('.thread-dropdown-box').style.display = "none";
+  document.querySelector(
+    '.font-dropdown-box').style.display = "none";
+
+  document.querySelector(
+    '.thread-dropdown-box').style.display = "none";
+
   const fontSizeBox = document.querySelector('.font-size-box');
 
-  fontSizeBox.style.display = fontSizeBox.style.display === "block" ? "none" : "block";
+  fontSizeBox.style.display =
+    fontSizeBox.style.display === "block" ? "none" : "block";
+
+  if (fontSizeBox.style.display === 'block') {
+    const leftPosition =
+      changeOtherBtn.getBoundingClientRect().left;
+    fontSizeBox.style.left = leftPosition + 'px';
+  }
 });
 
 
@@ -290,7 +324,9 @@ function hideBox() {
 }
 
 
-const fontSizeBoxBtn = document.querySelector('.font-size-box-btn');
+const fontSizeBoxBtn = document.querySelector(
+'.font-size-box-btn');
+
 fontSizeBoxBtn.addEventListener('click', () => {
   showBox();
   const fontSizeBox = document.querySelector('.font-size-box');
@@ -303,18 +339,29 @@ okay.addEventListener('click', () => {
 });
 
 
-
-
 (() => {
+  const changeFontBtn = document.getElementById(
+    'change-font-btn');
   changeFontBtn.addEventListener('click', () => {
-    document.querySelector('.thread-dropdown-box').style.display = "none";
-    document.querySelector('.font-size-box').style.display = "none";
-    //document.querySelector('.font-size-box-btn').style.display = "none";
+    document.querySelector(
+      '.thread-dropdown-box').style.display = "none";
 
-    const fontDropdownBox = document.querySelector('.font-dropdown-box');
-    fontDropdownBox.style.display = fontDropdownBox.style.display === 'block' ? 'none' : 'block';
+    document.querySelector(
+      '.font-size-box').style.display = "none";
+
+    const fontDropdownBox = document.querySelector(
+      '.font-dropdown-box');
+
+    fontDropdownBox.style.display =
+      fontDropdownBox.style.display === 'block' ? 'none' : 'block';
+    if (fontDropdownBox.style.display === 'block') {
+      const leftPosition =
+        changeFontBtn.getBoundingClientRect().left;
+      fontDropdownBox.style.left = leftPosition + 'px';
+    }
   });
 })();
+
 
 function changeFontFamily(font_family) {
   const generatorBox = document.querySelector('.generator-box');
@@ -369,7 +416,8 @@ function changeFontFamily(font_family) {
 
 
 (() => {
-  const fontDropdowns = document.querySelectorAll('.font-dropdown');
+  const fontDropdowns = document.querySelectorAll(
+    '.font-dropdown');
   fontDropdowns.forEach((fontDropdown) => {
     fontDropdown.addEventListener('click', () => {
       changeFontFamily(fontDropdown.textContent);
@@ -381,16 +429,20 @@ function changeFontFamily(font_family) {
 
 
 function newThreadShow() {
-  const confirmNewThread = document.querySelector('.confirm-new-thread');
+  const confirmNewThread = document.querySelector(
+    '.confirm-new-thread');
   confirmNewThread.classList.add('visible');
 }
 function newThreadHide() {
-  const confirmNewThread = document.querySelector('.confirm-new-thread');
+  const confirmNewThread = document.querySelector(
+    '.confirm-new-thread');
   confirmNewThread.classList.remove('visible');
 }
 
 
-const NewThreadBtn = document.getElementById('request-new-thread');
+const NewThreadBtn = document.getElementById(
+'request-new-thread');
+
 const acceptBtn = document.querySelector('.accept-btn');
 const declineBtn = document.querySelector('.decline-btn');
 
@@ -422,7 +474,8 @@ function buttonColor(element, color = "green") {
   // Change the button color to green
   element.style.backgroundColor = color;
 
-  // Set a timeout to reset the color after 2 seconds (adjust as needed)
+  // Set a timeout to reset the color after 2 seconds
+  //  (adjust as needed)
   setTimeout(() => {
     element.style.backgroundColor = originalColor;
   }, 500);
@@ -431,27 +484,40 @@ function buttonColor(element, color = "green") {
 
 // Defining and calling the function at the same time
 (() => {
-  const threadSelector = document.getElementById('thread-selector');
+  const threadSelector = document.getElementById(
+    'thread-selector');
     threadSelector.addEventListener('click', () => {
-      document.querySelector('.font-size-box').style.display = "none";
-      //document.querySelector('.font-size-box-btn').style.display = "none";
-      document.querySelector('.font-dropdown-box').style.display = "none"; 
+      document.querySelector(
+        '.font-size-box').style.display = "none";
+
+      //document.querySelector(
+      //  '.font-size-box-btn').style.display = "none";
+      document.querySelector(
+        '.font-dropdown-box').style.display = "none";
+
       buttonColor(threadSelector);
-      const threadDropdownBox = document.querySelector('.thread-dropdown-box');
-      threadDropdownBox.style.display = threadDropdownBox.style.display === "block" ? "none" : "block";
+      const threadDropdownBox = document.querySelector(
+        '.thread-dropdown-box');
+
+      threadDropdownBox.style.display =
+        threadDropdownBox.style.display ==="block" ? "none" : "block";
     });
 })();
 
 function addListenersToThreadButtons() {
-  const threadDropdownBox = document.querySelector('.thread-dropdown-box');
-  const threadDropDowns = document.querySelectorAll('.thread-dropdown');
+  const threadDropdownBox = document.querySelector(
+    '.thread-dropdown-box');
+  const threadDropDowns = document.querySelectorAll(
+    '.thread-dropdown');
+
   threadDropDowns.forEach((element) => {
     element.addEventListener('click', async () => {
       buttonColor(element, 'pink');
       threadChosen = element.textContent;
       threadDropdownBox.style.display = 'none';
       //alert(parseInt(threadChosen));
-      await sendCroppedImage(false, false, "active", parseInt(threadChosen));
+      await sendCroppedImage(
+        false, false, "active", parseInt(threadChosen));
     });
   });
 }
@@ -461,7 +527,9 @@ addListenersToThreadButtons();
 
 
 function generateThreadButtons(array) {
-  const threadDropdownBox = document.querySelector('.thread-dropdown-box');
+  const threadDropdownBox = document.querySelector(
+    '.thread-dropdown-box');
+
   // Empty it to hold the newly generated elements
   threadDropdownBox.innerHTML = "";
 
@@ -497,8 +565,10 @@ sendPromptBtn.addEventListener('click', async () => {
   if (textArea.value) {
     //alert("sending prompt");
     const loadHolder = document.querySelector('.loading-box');
-    const starContMain = document.querySelector('.star-container-main');
-    const generatorBox = document.querySelector('.generator-box');
+    const starContMain = document.querySelector(
+      '.star-container-main');
+    const generatorBox = document.querySelector(
+      '.generator-box');
     const btns = document.querySelectorAll('.btnBtn');
     const textArea = document.getElementById('text-area');
 
@@ -538,10 +608,20 @@ choosePhoto.addEventListener('click', (e) => {
 
 fileInput.addEventListener('change', handleFileSelect);
 
+
 function handleFileSelect() {
-    //alert("file load");
-    document.querySelector('.container').style.display = "flex";
+    const generatorBox = document.querySelector('.generator-box');
+    const container = document.querySelector('.container');
+
+    container.style.display = "flex";
     downloadButton.classList.add("hide");
+
+    // Get the bounding rectangle of the image container
+    const generatorHeight = generatorBox.getBoundingClientRect().height;
+
+    if (generatorHeight <= 1100) {
+        generatorBox.style.height = '1100px';
+    }
 
     let reader = new FileReader();
     reader.readAsDataURL(fileInput.files[0]);
@@ -554,12 +634,10 @@ function handleFileSelect() {
                 cropper.destroy();
             }
 
-            //cropper = new Cropper(image);
             cropper = new Cropper(image, {
               scalable: false,
               zoomable: false,
             });
-
 
             options.forEach((element) => {
                 element.classList.remove("hide");
@@ -569,6 +647,7 @@ function handleFileSelect() {
         };
     };
 }
+
 
 
 
@@ -587,6 +666,15 @@ aspectRatio.forEach((element) => {
 previewButton.addEventListener("click", (e) => {
   const loadHolder = document.getElementById('load-tmp-holder');
   loadHolder.style.display = 'flex';
+
+  // Get the bounding rectangle of the image container
+  const generatorBox = document.querySelector('.generator-box');
+  const generatorHeight = generatorBox.getBoundingClientRect().height;
+  alert(generatorHeight);
+
+  if (generatorHeight <= 1800) {
+      generatorBox.style.height = '1800px';
+  }
 
   e.preventDefault();
   // Get cropped canvas and perform actions
@@ -607,6 +695,7 @@ downloadButton.addEventListener('click', async (e) => {
   const btns = document.querySelectorAll('.btnBtn');
   const textArea = document.getElementById('text-area');
 
+  generatorBox.style.height = "";
   btns.forEach((element) => {
     element.style.display = 'none';
   });

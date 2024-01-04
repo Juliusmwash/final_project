@@ -178,21 +178,20 @@ def build_email_body(code, value=0):
     body = f"""
     <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
     <p>A new shared content has been created, and you have been tagged.
-    <p>The shared ID provided below can be used to retrieve the content
+    <p>Use the shared ID provided below to retrieve the content
     on the <strong>ZMC Student Assistant</strong> website.
-    </p><p>Our commitment is to make learning enjoyable. Utilize the
-    shared content to your advantage.</p>
+    </p><p>Our commitment is to make learning enjoyable.</p>
 
     <p><span>{code}</span></p>
-    <p>Thank you for choosing <strong>ZMC Student Assistant!</strong></p>
+    <p>Need further assistance? Feel free to reach us at
+    zambezimarketcenter@gmail.com</p>
     <h4 style="color: #1E90FF;">Best regards,</h4>
     <h4 style="color: #1E90FF;">ZMC Student Assistant Team</h4>
     """
     body2 = f"""
     <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
-    <p>Welcome to ZMC Student Assistant! We are thrilled to have
-    you on board, and we appreciate your decision to create an
-    account with us. </p>
+    <p>Welcome to ZMC Student Assistant, We are thrilled to have
+    you on board</p>
 
     <p>Please use the following verification code to
     complete the registration process:</p>
@@ -200,12 +199,10 @@ def build_email_body(code, value=0):
     <p><span>{code}</span></p>
 
     <p>If you did not request this code or are not the intended
-    recipient, please disregard this message. Your account
-    security is important to us, and this code should only be
-    shared by the account holder.</p>
+    recipient, please disregard this message.</p>
 
-    <p>Thank you for choosing ZMC Student Assistant. We look
-    forward to providing you with an exceptional experience.</p>
+    <p>Need further assistance? Reach us at
+    zambezimarketcenter@gmail.com</p>
 
     <h4 style="color: #1E90FF;">Best regards,</h4>
 
@@ -213,21 +210,19 @@ def build_email_body(code, value=0):
     """
     body3 = f"""
     <p style="color:#1E90FF; font-weight:bold;">Dear Student,</p>
-    <p>We have successfully received your password reset request at ZMC
+    <p>We have received your password reset request at ZMC
     Student Assistant.</p>
 
-    <p>Please use the following code to complete the password
-    reset process:</p>
+    <p>Please use the following reset code to complete the
+    password reset process:</p>
 
     <p><span>{code}</span></p>
 
     <p>If you did not initiate this password reset or are not the
-    intended recipient, please disregard this message. Your
-    account security is paramount, and this code should only be
-    shared by the account holder.</p>
+    intended recipient, please disregard this message.</p>
 
-    <p>Thank you for trusting ZMC Student Assistant. We're here to
-    assist you and ensure a seamless experience.</p>
+    <p>Need further assistance? Reach us at
+    zambezimarketcenter@gmail.com</p>
 
     <h4 style="color: #1E90FF;">Best regards,</h4>
 

@@ -1,0 +1,46 @@
+/*
+<!-- Generator Box span element color change -->                                 <div id="span-change-color-activator-btn"></div>
+          <div id="span-change-color-btn"></div>                                           <!-- Generator Box span element color change end -->
+*/
+
+
+#span-change-color-activator-btn,
+#span-change-color-btn {
+  width: 40px;
+  height: 30px;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /*background-color: orange;*/
+  /*backdrop-filter: blur(5px);*/
+  position: absolute;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 5px;
+  top: 100px;
+  right: 5px;
+  z-index: 150;
+  user-select: none;
+  transform: scaleX(0);*/
+  transform-origin: top right;
+  opacity: 0;
+  transition: transform .03s ease-in-out, opacity .02s ease-in-out;
+  background-color: transparent;
+}
+#span-change-color-activator-btn {
+  transform: scaleX(1);
+  opacity: 1;
+}
+#span-change-color-btn {
+  border: .5px solid orange;
+  border-top: 0;
+  border-right: 0;
+  background-color: hotpink;
+  z-index: 140;
+}
+#span-change-color-btn.visible,
+#span-change-color-activator-btn.visible {
+  transform: scaleX(1);
+  opacity: 1;
+}

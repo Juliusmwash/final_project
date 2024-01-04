@@ -31,6 +31,7 @@
 		<!--<link rel="stylesheet" href="../static/css/decide.css">-->
     <link rel="stylesheet" href="../static/css/page_loader.css">
 		<link rel="stylesheet" href="../static/css/content_share.css">
+		<link rel="stylesheet" href="../static/css/change_span_color.css">
     <title>ZMC STUDENT ASSISTANT</title>
     <style>
     </style>
@@ -214,6 +215,11 @@
 						<button type="button" id="pdf-exit-btn">exit</button>
 					</div>
 					<!-- pdf download sectiom end -->
+
+					<!-- Generator Box span element color change -->
+					<span id="span-change-color-activator-btn"></span>
+					<span id="span-change-color-btn"></span>
+					<!-- Generator Box span element color change end -->
 
 
 
@@ -457,6 +463,88 @@
       MathJax.typeset();
 			});
     </script>
+		<script>
+			(async () => {
+				function spanShowBox() {
+					const animatedBox = document.getElementById('span-change-color-btn');
+					animatedBox.classList.add('visible');
+				}
+				function spanHideBox() {
+					const animatedBox = document.getElementById('span-change-color-btn');
+					animatedBox.classList.remove('visible');
+				}
+				async function operateSpanColorChange() {
+					let colorTrack;
+
+					const buttonOne = document.getElementById(
+						'span-change-color-activator-btn');
+					const buttonTwo = document.getElementById('span-change-color-btn');
+
+				  buttonTwo.addEventListener('click', async () => {
+						spanHideBox();
+						const buttonOne = document.getElementById(
+							'span-change-color-activator-btn');
+						const parentElement = document.querySelector('.generator-box');
+						const spanElements = parentElement.querySelectorAll('span');
+
+						spanElements.forEach(async (element) => {
+							element.style.setProperty('color', colorTrack, 'important');
+						});
+
+						buttonTwo.style.zIndex = 150;
+				    buttonOne.style.zIndex = 170;
+					});
+
+				  buttonOne.addEventListener('click', async () => {
+						colorTrack = await changeTextColor();
+						const buttonTwo = document.getElementById('span-change-color-btn');
+						buttonTwo.style.backgroundColor = colorTrack;
+						buttonOne.style.zIndex = 150;
+				    buttonTwo.style.zIndex = 170;
+						spanShowBox();
+				  });
+
+					async function changeTextColor() {
+					  const parentElement = document.querySelector('.generator-box');
+					  const spanElements = parentElement.querySelectorAll('span');
+					  const colors = [
+					    '#F0F8FF', '#FAEBD7', '#00FFD4', '#7FFFD4', '#8A2BE2', '#FF7F50',
+					    '#6595ED', '#B8860B', '#A9A9A9', '#BDB76B', '#FF8C00', '#8FBC8F',
+					    '#00CED1', '#FF1493', '#FFD700', '#FFB6C1', '#20B2AA', '#00FA9A',
+					    '#DA70D6', '#40E0D0', '#9ACD32', '#4CAF50', '#FFC107', '#9C27B0',
+							'#E91E63', '#03A9F4', '#FF9800', '#673AB7', '#2196F3', '#FF5722',
+							'#607D8B', '#8BC34A', '#CDDC39', '#FFEB3B', '#795548', '#FF4081',
+							'#009688', '#FF5252', '#00BCD4', '#FFEB3B', '#FFC107', '#4CAF50',
+							'#2196F3', '#E91E63', '#FF5722', '#FF9800', '#673AB7', '#03A9F4',
+							'#FFC107', '#4CAF50', '#E91E63', '#FF4081', '#00BCD4', '#FFEB3B',
+							'#FF9800', '#2196F3', '#673AB7', '#795548', '#FF5252', '#4CAF50',
+							'#2196F3', '#FF4081', '#9C27B0', '#00BCD4', '#FFEB3B', '#FF9800',
+							'#673AB7', '#03A9F4', '#FFC107', '#4CAF50', '#E91E63', '#FF5722',
+							'#FF5252', '#2196F3', '#FF4081', '#00BCD4', '#FFEB3B', '#FF9800',
+							'#4CAF50', '#673AB7', '#8BC34A', '#FFC107', '#03A9F4', '#E91E63',
+							'#FF5722', '#FF5252', '#673AB7', '#03A9F4', '#FFC107', '#9C27B0',
+							'#E91E63', '#FF4081', '#00BCD4', '#FFEB3B', '#FF9800', '#673AB7',
+							'#03A9F4', '#FFC107', '#4CAF50', '#E91E63', '#FF5722'
+						];
+
+						// shuffle the array
+						return await shuffleArray(colors);
+					}
+				}
+				// Function to shuffle the array using Fisher-Yates algorithm
+				async function shuffleArray(colors) {
+					for (let i = colors.length - 1; i > 0; i--) {
+						const j = Math.floor(Math.random() * (i + 1));
+						[colors[i], colors[j]] = [colors[j], colors[i]];
+					}
+					const num = Math.floor(Math.random() * colors.length);
+					return colors[num];
+				}
+
+				// Change span element colour
+				await operateSpanColorChange();
+			})();
+		</script>
     <script src="../static/js/image_script.js"></script>
 		<script src="../static/js/content_share.js"></script>
 		<script src="../static/js/index-pdf-download.js"></script>

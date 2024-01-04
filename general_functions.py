@@ -418,12 +418,93 @@ async def clean_content(input_content):
                             "\\n", "<br>").replace(
                                     "\\'", "'").replace('\\"', '"')
 
-            # print(f"\n\nCleaned content func = {cleaned_content}\n\n")
+            # Finalise content processing
+            processed_content = await process_text(cleaned_content)
 
-            return cleaned_content
+            # Check if the message was not correctly interprated
+            pattern = r'^\s*(<br>\s*)+$'
+            match = re.search(pattern, processed_content)
+            if match:
+                return cleaned_content
+            return processed_content
 
     # Return the original content if substrings are not found
     return input_content
+
+
+async def process_text(input_text):
+    """
+    Processes input text and applies formatting based on specified patterns.
+
+    Parameters:
+    - input_text (str): The input text to be processed.
+
+    Returns:
+    - str: The formatted text.
+    """
+
+    # Split input_text by '<br>' to process each part separately
+    words = input_text.split('<br>')
+    result = []
+
+    for word in words:
+        keep_track = False
+        # Check for empty string and append '<br>' if found
+        if not word:
+            result.append("<br>")
+        elif word[0].isupper() and ':' in word:
+            # Process uppercase words with ':' pattern
+            pattern = r'([A-Za-z]+ \([A-Za-z]+ [A-Za-z]+\): )|([A-Za-z]+: )'
+            match = re.search(pattern, word)
+            if match:
+                colon_index = word.index(':')
+                statement = (
+                    '<span style="font-weight: bold;">'
+                    + f'{word[:colon_index]}'
+                    + f'</span>{word[colon_index:]}<br>'
+                )
+                result.append(statement)
+        elif word[0].isupper() and '-' in word:
+            # Process uppercase words with '-' pattern
+            pattern = r'([A-Za-z]+ \([A-Za-z]+ [A-Za-z]+\) - )|([A-Za-z]+ - )'
+            match = re.search(pattern, word)
+            if match:
+                colon_index = word.index('-')
+                statement = (
+                    '<span style="font-weight: bold;">'
+                    + f'{word[:colon_index]}'
+                    + f'</span>{word[colon_index:]}<br>'
+                )
+                result.append(statement)
+        else:
+            # Process numeric patterns
+            pattern = r'(\d+\.\s)'
+            match = re.search(pattern, word)
+            if match:
+                if ':' in word:
+                    colon_index = word.index(':')
+                    statement = (
+                        '<span style="font-weight: bold;">'
+                        + f'{word[:colon_index]}'
+                        + f'</span>{word[colon_index:]}<br>'
+                    )
+                    result.append(statement)
+                elif '-' in word:
+                    colon_index = word.index('-')
+                    statement = (
+                        '<span style="font-weight: bold;">'
+                        + f'{word[:colon_index]}'
+                        + f'</span>{word[colon_index:]}<br>'
+                    )
+                    result.append(statement)
+            else:
+                keep_track = True
+        if keep_track:
+            result.append(word)
+
+    # Concatenate formatted parts to create the final text
+    final_text = ''.join(result)
+    return final_text
 
 
 # Function to create list of thread numbers

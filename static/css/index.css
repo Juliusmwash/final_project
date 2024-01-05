@@ -14,14 +14,26 @@ html {
 }
 
 body {
-  /*font-family: Arial, sans-serif;*/
-  display: block;
-  flex-direction: column;
-  align-items: center;
   background-image: url("../images/theme.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+}
+
+.main-container-blur {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: rgba(0, 4, 53, 0.5);
+}
+
+.main-container {
+  /*font-family: Arial, sans-serif;*/
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .education-level,
@@ -40,31 +52,29 @@ label,
   align-items: center;
 }
 
-#blur-div {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #000435;
-  opacity: 0.8;
-  z-index: 2;
-}
 header {
   position: fixed;
+  max-width: 800px;
   top: 0;
   right: 0;
   left: 0;
   height: 50px;
-  font-family: 'Kalnia', sans-serif;
   padding: 10px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  background-color: green;/*#292F33;*/
   background-color: #000435;
-  color: #7DF9FF;
   z-index: 35;
+}
+.header-container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  color: #7DF9FF;
+  font-family: 'Kalnia', sans-serif;
+  position: relative;
 }
 
 .token-label {
@@ -77,7 +87,7 @@ header {
   position: absolute;
   letter-spacing: 1px;
   top: 30px;
-  left: 10px;
+  left: 5px;
   z-index: 10;
 }
 .tokens-counter {
@@ -92,7 +102,7 @@ header {
   border-radius: 5px;
   position: absolute;
   top: 40px;
-  left: 10px;
+  left: 5px;
   z-index: 10;
 }
 .signout-status {
@@ -108,7 +118,7 @@ header {
   color: #FF0000;
   position: absolute;
   top: 40px;
-  right: 10px;
+  right: 5px;
   z-index: 10;
 }
 
@@ -135,6 +145,7 @@ h2 {
 .loading-box2,
 .loading-box3 {
   font-family: "Kalnia", sans-serif;
+  font-family: "Lobster", sans-serif;
   width: 100%;
   /*height: 50px;*/
   position: relative;
@@ -163,6 +174,7 @@ h2 {
 #load-tmp-holder,
 #load-tmp-holder2,
 #load-tmp-holder3 {
+  font-family: "Lobster", sans-serif;
   width: 100%;
   display: flex;
   justify-content: flex-start;
@@ -171,17 +183,17 @@ h2 {
   font-size: 1.3rem;
   color: lime;/*#ffa812;*/
   border-radius: 10px;
-  opacity: .6;
+  opacity: 1;
 }
 #load-tmp-holder {
-  font-family: "Kalnia", sans-serif;
+  /*font-family: "Kalnia", sans-serif;*/
 }
 #load-tmp-holder2 {
-  font-family: "Kalnia", sans-serif;
+  /*font-family: "Kalnia", sans-serif;*/
   z-index: 25;
 }
 #load-tmp-holder3 {
-  font-family: "Kalnia", sans-serif;
+  /*font-family: "Kalnia", sans-serif;*/
   /*margin-left: 9%;*/
 }
 @keyframes bouncing-dots {
@@ -204,7 +216,7 @@ h2 {
   transform: translateY(-50%);
 }
 .loading-dots {
-  left: 220px;
+  left: 180px;
 }
 .loading-dots2 {
   z-index: 25;
@@ -404,16 +416,24 @@ label {
   top: 10px;
   right: 0px;
   left: 0px;
-  padding: 0 10px;
   height: 100px;
   position: fixed;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  justify-content: center;
   padding-bottom: 10px;
-  z-index: 30;
   background-color: #000435;
   z-index: 90;
+}
+
+.fixed-div-box {
+  width: 100%;
+  height: 100%;
+  padding: 0 5px;
+  max-width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: relative;
 }
 
 .generator-box {
@@ -456,6 +476,7 @@ label {
 }
 #thread-selector {
   width: 50px;
+  margin-right: 5px;
 }
 #change-font-btn {
   width: 90px;

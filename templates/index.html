@@ -37,8 +37,10 @@
     </style>
 </head>
 <body>
-		<div id="blur-div"></div>
+	<div class="main-container-blur">
+	<div class="main-container">
     <header>
+			<div class="header-container">
 				<div class="token-label">tokens</div>
 				<div class="tokens-counter">0</div>
 				<div class="signout-status">Sign-out</div>
@@ -104,7 +106,7 @@
 						</div>
 					</div>
 					<!-- Share section end -->
-
+			</div>
     </header>
 		<span id="thread-id-holder" style="display: none;"></span>
 
@@ -125,6 +127,9 @@
 
 
 				<div id="fixed-div">
+					<div class="fixed-div-box">
+
+
 					<!-- Threads selection section -->
 					<div id="request-new-thread">new thread</div>
 					<!-- font change -->
@@ -288,7 +293,10 @@
 						<div class="thread-dropdown">2</div>
 						<div class="thread-dropdown">3</div>
 					</div>
+
 				</div>
+				</div>
+				<!-- fixed div end -->
 
 					<div class="generator-prompt">
 						<!-- -->
@@ -364,6 +372,10 @@
     <footer>
         <p class="copyright" style="display: none;">&copy; 2023 ZMC Student Assistant</p>
     </footer>
+	<!-- main-container end -->
+	</div>
+	<!-- main-container-blur end -->
+	</div>
     <script>
 			// Get the data threads sequence from the server
 			const tokensCount = {{ tokens_count | tojson | safe }};

@@ -303,13 +303,18 @@ changeOtherBtn.addEventListener('click', () => {
 
   const fontSizeBox = document.querySelector('.font-size-box');
 
+  const fixedDivBox = document.querySelector('.fixed-div-box');
+
   fontSizeBox.style.display =
     fontSizeBox.style.display === "block" ? "none" : "block";
 
   if (fontSizeBox.style.display === 'block') {
+    const deductLength =
+        fixedDivBox.getBoundingClientRect().left;
     const leftPosition =
       changeOtherBtn.getBoundingClientRect().left;
-    fontSizeBox.style.left = leftPosition + 'px';
+
+    fontSizeBox.style.left = (leftPosition - deductLength) + 'px';
   }
 });
 
@@ -352,12 +357,18 @@ okay.addEventListener('click', () => {
     const fontDropdownBox = document.querySelector(
       '.font-dropdown-box');
 
+    const fixedDivBox = document.querySelector('.fixed-div-box');
+
     fontDropdownBox.style.display =
       fontDropdownBox.style.display === 'block' ? 'none' : 'block';
     if (fontDropdownBox.style.display === 'block') {
+      const deductLength =
+        fixedDivBox.getBoundingClientRect().left;
       const leftPosition =
         changeFontBtn.getBoundingClientRect().left;
-      fontDropdownBox.style.left = leftPosition + 'px';
+
+      // Set the left position of the font dropdown box
+      fontDropdownBox.style.left = (leftPosition - deductLength) + 'px';
     }
   });
 })();
@@ -851,7 +862,6 @@ async function sendCroppedImage(imagePrompt = false, textPrompt = '', threadStat
       });
     });
 
-    document.getElementById('blur-div').style.bottom = 0;
   } catch (error) {
     alert(`Send Cropped Image Function Error = ${error}`);
     console.error('Error sending or processing cropped image:', error);

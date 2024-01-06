@@ -179,7 +179,6 @@
 					</div>
 
 
-
 					<!-- pdf download section -->
 					<div class="pdf-download-container">
 						<div class="pdf-loading-box" style="display: none;">
@@ -192,28 +191,33 @@
 						</div>
 
 						<div class="download-box">
-							<form action="/generate_pdf_route" method="POST" id="default-pdf-form">
+							<!--<form action="/generate_pdf_route" method="POST" id="default-pdf-form">
 								<input type="hidden" name="default_pdf" value="okay"/>
-							</form>
+							</form> -->
 							<button class="pdf-download-btn" type="submit" id="download-btn">download</button>
 							<button class="pdf-download-btn"  id="advanced-btn">advanced</button>
 						</div>
 						<div class="advanced-box" style="display: none;">
 							<form action="/generate_pdf_route" method="POST" id="custom-pdf-form">
 								<label class="pdf-input-label">letter spacing</label>
-								<input type="number" class="pdf-input" name="letter_spacing">
+								<input type="number" class="pdf-input" name="letter_spacing" id="letter-spacing-input" placeholder="Value between 1 and 3, inclusive.">
 
 								<label class="pdf-input-label">font size</label>
-								<input type="number" class="pdf-input" name="font_size">
+								<input type="number" class="pdf-input" name="font_size" id="font-size-input" placeholder="Value between 10 and 24, inclusive.">
 
 								<label class="pdf-input-label">page margins</label>
-								<input type="number" class="pdf-input" name="page_margins">
+								<input type="number" class="pdf-input" name="page_margins" id="page-margins-input" placeholder="Value between 1 and 2, inclusive.">
 
 								<label class="pdf-input-label">background color</label>
-								<input type="text" class="pdf-input" name="background_color">
+								<input type="text" class="pdf-input" name="background_color" id="background-color-input" placeholder="code (hex or rgb), #123abc, ...">
+
+								<label class="pdf-input-label">Highlight color</label>
+								<input type="text" class="pdf-input" name="span_color" id="span-element-color" placeholder="code (hex or rgb), #123abc, ...">
+
+								<input type="hidden" name="font_family" id="font-family-input">
 
 								<label class="pdf-input-label">text colour</label>
-								<input type="text" class="pdf-input" name="text_color">
+								<input type="text" class="pdf-input" name="text_color" id="text-color-input" placeholder="code (hex or rgb), rgb(10, 20, 30), ...">
 							</form>
 							<button class="pdf-download-btn" type="submit" id="download-advanced-btn">download</button>
 						</div>
@@ -434,7 +438,6 @@
 				        element.style.color = choiceColor;
 				      }
 						} else if (selector === '.generator-box') {
-							element.style.fontSize = fontSize;
 							element.style.color = choiceColor;
 							element.style.backgroundColor = choiceBackground;
 						}
@@ -536,7 +539,13 @@
 							'#4CAF50', '#673AB7', '#8BC34A', '#FFC107', '#03A9F4', '#E91E63',
 							'#FF5722', '#FF5252', '#673AB7', '#03A9F4', '#FFC107', '#9C27B0',
 							'#E91E63', '#FF4081', '#00BCD4', '#FFEB3B', '#FF9800', '#673AB7',
-							'#03A9F4', '#FFC107', '#4CAF50', '#E91E63', '#FF5722'
+							'#03A9F4', '#FFC107', '#4CAF50', '#E91E63', '#FF5722', '#57FEFF',
+							'#16E2F5', '#81D8D0', '#7FFFD4', '#01F9C6', '#43C6DB', '#22CE83',
+							'#59E817', '#16F529', '#36F57F', '#00FA9A', '#66FF00', '#7FFF00',
+							'#ADFF2F', '#DAEE01', '#F5FFFA', '#FFEFD5', '#FFEBCD', '#FFDEAD',
+							'#FBE7A1', '#FFFF33', '#FDD017', '#CD7F32', '#93917C', '#F67280',
+							'#F75D59', '#FFB2D0', '#E38AAE', '#F778A1', '#F660AB', '#FF1493',
+							'#F433FF', '#7F38EC', '#9D00FF', '#EAEEE9',
 						];
 
 						// shuffle the array

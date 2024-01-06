@@ -31,7 +31,9 @@ advancedBtn.addEventListener('click', () => {
 
   const advancedBox = document.querySelector('.advanced-box');
   const defaultBtn = document.querySelector('.pdf-download-btn');
-  advancedBox.style.display = advancedBox.style.display == "flex"? "none" : "flex";
+  advancedBox.style.display =
+    advancedBox.style.display == "flex"? "none" : "flex";
+
   if (advancedBox.style.display === "flex") {
     defaultBtn.style.display = "none";
   } else {
@@ -42,12 +44,86 @@ advancedBtn.addEventListener('click', () => {
 const defaultBtn = document.querySelector('.pdf-download-btn');
 defaultBtn.addEventListener('click', () => {
   const defaultFormBtn = document.getElementById('default-pdf-form');
-  defaultFormBtn.submit();
+  const generatorBox = document.querySelector('.generator-box');
+  const spanElement = generatorBox.querySelector('span');
+
+  // Get all the form input elements
+  const formLetterSpacing = document.getElementById(
+    'letter-spacing-input');
+  const formFontSize = document.getElementById('font-size-input');
+  const formPageMargins = document.getElementById('page-margins-input');
+  const formBackgroundColor = document.getElementById(
+    'background-color-input');
+  const formTextColor = document.getElementById('text-color-input');
+  const formSpanColor = document.getElementById(
+    'span-element-color');
+  const formFontFamily = document.getElementById(
+    'font-family-input');
+  const customPdfForm = document.getElementById("custom-pdf-form");
+
+  // Add values to all those input elements. This will be the default
+  formLetterSpacing.value = 2;
+  formFontSize.value = fontSize;
+  formPageMargins.value = 1;
+  formBackgroundColor.value = choiceBackground;
+  formTextColor.value = choiceColor;
+  formSpanColor.value = spanElement.style.color;
+  formFontFamily.value = fontFamily;
+
+  // Check if span color was added successfully. Else, add lime color
+  if (!formSpanColor.value) {
+    formSpanColor.value = "lime";
+  }
+
+  //alert(`${formLetterSpacing.value}, ${formFontSize.value}, ${formPageMargins.value}, ${formBackgroundColor.value}, ${formTextColor.value}, ${formSpanColor.value}, ${formFontFamily.value}`);
+
+  //defaultFormBtn.submit();
+  customPdfForm.submit();
 });
 
-const downloadAdvancedBtn = document.getElementById('download-advanced-btn');
+const downloadAdvancedBtn = document.getElementById(
+'download-advanced-btn');
+
 downloadAdvancedBtn.addEventListener('click', () => {
   const customPdfForm = document.getElementById("custom-pdf-form");
+  const generatorBox = document.querySelector('.generator-box');
+  const spanElement = generatorBox.querySelector('span');
+  
+  // Get all the form input elements
+  const formLetterSpacing = document.getElementById(
+    'letter-spacing-input');
+  const formFontSize = document.getElementById('font-size-input');
+  const formPageMargins = document.getElementById('page-margins-input');
+  const formBackgroundColor = document.getElementById(
+    'background-color-input');
+  const formTextColor = document.getElementById('text-color-input');
+  const formSpanColor = document.getElementById(
+    'span-element-color');
+  const formFontFamily = document.getElementById(
+    'font-family-input');
+
+  // Add values to all empty input elements.
+  if (!formLetterSpacing.value) {
+    formLetterSpacing.value = 1;
+  }
+  if (!formFontSize.value) {
+    formFontSize.value = fontSize;
+  }
+  if (!formPageMargins.value) {
+    formPageMargins.value = 1;
+  }
+  if (!formBackgroundColor.value) {
+    formBackgroundColor.value = choiceBackground;
+  }
+  if (!formTextColor.value) {
+    formTextColor.value = choiceColor;
+  }
+  if (!formSpanColor.value) {
+    formSpanColor.value = spanElement.style.color;
+  }
+  if (!formFontFamily.value) {
+    formFontFamily.value = fontFamily;
+  }
   customPdfForm.submit();
 });
 

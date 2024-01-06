@@ -40,7 +40,7 @@ from general_functions import num_tokens_from_messages, clean_content
 from general_functions import save_thread_number, create_thread_array
 from general_functions import shift_threads, get_thread_data
 from general_functions import get_user_styling_preference
-from general_functions import replace_backslash_latex
+from general_functions import replace_backslash_latex, check_lock_status
 from general_functions import reverse_replace_backslash_latex
 from general_functions import generate_key, hash_password
 from general_functions import generate_pdf_styler_obj, code_to_pdf
@@ -187,6 +187,27 @@ def update_user_styling():
         return jsonify({"success": False})
 
 
+"""
+if user:
+            # Check the lock status of the user account
+            account_lock = user.get("lock", True)
+
+            unlocked = {"success": True, "lock": False, "Error": False}
+            locked = {"success": True, "lock": True, "Error": False}
+
+            return locked if account_lock else unlocked
+
+        # Unable to get user data
+        message = "Unable to retrieve user data from the database"
+        return {"success": False, "Error": message, "e_server": False}
+
+    except Exception as e:
+        print(f"lock_status Error: {e}")
+        message = "Sorry an error occured, try again latter."
+        return {"success": False, "Error": message, "e_serverv": True}
+"""
+
+
 @app.route('/', endpoint="index_endpoint", methods=["GET"])
 @login_required
 async def index():
@@ -202,6 +223,19 @@ async def index():
     - Rendered HTML template with user information and styling preferences.
 
     """
+    # Check if the user's account is locked.
+    obj = check_lock_status()
+    # print(f"access obj = {str(obj)}")
+
+    if not obj["access"]:
+        # Get the user stylings
+        user_styling = await get_user_styling_preference(
+                current_user.email)
+
+        return render_template(
+                "index.html", tokens_count=obj["tokens"], obj=obj,
+                user_styling=user_styling, thread_id="")
+
     # Save user tokens to the session. Used by the requests which do
     #   not make api calls
     session["user_tokens"] = get_remaining_user_tokens()
@@ -354,6 +388,19 @@ async def zmc_assistant_data():
 
     """
     try:
+        # Check if the user's account is locked.
+        obj = check_lock_status()
+
+        if not obj["access"]:
+            # Get the user stylings
+            user_styling = await get_user_styling_preference(
+                    current_user.email)
+
+            return jsonify({'success': True,
+                            'response_text': obj["response_text"],
+                            "tokens_count": "0",
+                            "thread_id": ""})
+
         prompt = ''
 
         file_type = request.headers.get('File-Type')
@@ -618,6 +665,13 @@ async def program_info_func():
 
     """
     try:
+        # Check if the user's account is locked.
+        obj = check_lock_status()
+
+        if not obj["access"]:
+            # Return lock message
+            return jsonify({"program_intro": obj["response_text"]})
+
         # Connect to MongoDB
         collection = openai_db['program_intro']
 
@@ -849,6 +903,13 @@ async def enable_content_sharing():
         - Handle the process of sending emails to tagged students.
     """
 
+    # Check if the user's account is locked.
+    obj = check_lock_status()
+
+    if not obj["access"]:
+        # Return lock message
+        return jsonify({"success": False, "message": obj["response_text"]})
+
     content_title = request.form.get('content_title', None)
     description = request.form.get('description', None)
     tagged_emails = request.form.get('tagged_emails', None)
@@ -917,6 +978,15 @@ async def get_shared_content():
     """
 
     try:
+        # Check if the user's account is locked.
+        obj = check_lock_status()
+        print(f"access obj = {str(obj)}")
+
+        if not obj["access"]:
+            # Return lock message
+            return jsonify({"success": False,
+                            "message": obj["response_text"]})
+
         shared_id = request.form.get('shared_id', None)
 
         # Connect to the database
@@ -961,10 +1031,18 @@ async def get_shared_content():
         return jsonify({"success": False, "message": e})
 
 
+@login_required
 @app.route("/generate_pdf_route", methods=["POST"])
 async def generate_pdf_route():
     # print("\n\n\ngenerate_pdf_route called\n\n\n")
     try:
+        # Check if the user's account is locked.
+        obj = check_lock_status()
+
+        if not obj["access"]:
+            # Return lock message
+            return jsonify({"message": obj["response_text"]})
+
         obj = {}
         pdf_path = None
 
@@ -974,6 +1052,10 @@ async def generate_pdf_route():
         obj["text_color"] = request.form.get("text_color", None)
         obj["page_margins"] = request.form.get("page_margins", None)
         obj["background_color"] = request.form.get("background_color", None)
+        obj["span_color"] = request.form.get("span_color", None)
+        obj["font_family"] = request.form.get("font_family", None)
+
+        print(f"object = {str(obj)}")
 
         # Validate user input
         result = validate_pdf_request_data(obj)

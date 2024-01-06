@@ -298,7 +298,7 @@ def registration_proceed():
             "email": email,
             "password": hashed_password,
             "student_name": student_name,
-            "tokens": 100000,
+            "tokens": 1000,
             "accumulating_tokens": 0,
             "lock": False,
             "user_styling": {"font_size": 15, "font_family": "Gruppo",

@@ -64,6 +64,103 @@ Happy coding!
 """
 
 
+def check_lock_status():
+    """
+    Check if the user's account is locked.
+
+    Returns:
+    - dict: A dictionary indicating the user's access status.
+        If the account is locked, returns a dictionary with access
+        set to False and additional information in response_text.
+        If the account is not locked, returns a dictionary with
+        access set to True.
+    """
+
+    return_lock_message = ""
+    lock_obj = lock_status(current_user.email)
+
+    if lock_obj.get("lock", True):
+        # User has being locked out due to token depletion
+        return_lock_message = (
+                "<p style=&bksl;color:#FF0000 !important;&bksl;>"
+                + f"""{lock_obj["message"]}</p>"""
+                )
+
+    elif lock_obj.get("error", False):
+        # An error occurred before the user remaining tokens could
+        # be checked; this is considered an account lock.
+        return_lock_message = (
+                "<p style=&bksl;color:#FF0000 !important;&bksl;>"
+                + f"""{lock_obj["message"]}</p>"""
+                )
+
+    if return_lock_message:
+        obj = {
+            "access": False,
+            "success": True,
+            "response_text": return_lock_message,
+            "threads": [],
+            "tokens": lock_obj["tokens"]
+        }
+        return obj
+
+    return {"access": True}
+
+
+def lock_status(email):
+    """
+    Check the lock status of a user account based on the
+    provided email.
+
+    Parameters:
+    - email (str): The email address associated with the
+    user account.
+
+    Returns:
+        - str: "locked" if the account is locked, "unlocked" if it
+        is unlocked.
+        Returns an error message if there are issues retrieving the
+        user from the database.
+        Returns an error message if an exception occurs.
+    """
+    try:
+        # Connect to the database
+        collection = openai_db["user_account"]
+
+        # Retrieve user from the database
+        user = collection.find_one({"email": email})
+
+        # Define an object to hold the return data
+        obj = {}
+        tokens = 0
+
+        if user:
+            # Define a lock message
+            message = (
+                    "Dear student, your tokens are depleted. Recharge"
+                    + " your account to continue enjoying the "
+                    + "services."
+                    )
+
+            # Check the lock status of the user account
+            account_lock = user.get("lock", True)
+            tokens = user.get("tokens", 0)
+
+            unlocked = {"lock": False, "message": "", "tokens": tokens}
+            locked = {"lock": True, "message": message, "tokens": tokens}
+
+            return locked if account_lock else unlocked
+
+        # Unable to get user data
+        message = "Unable to retrieve your account data from the database"
+        return {"error": True, "message": message, "tokens": tokens}
+
+    except Exception as e:
+        print(f"lock_status Error: {e}")
+        message = "Sorry an error occured, try again latter."
+        return {"error": True, "message": message, "tokens": tokens}
+
+
 def generate_pdf_styler_obj(html_content, user_obj=None):
     # print("generate_pdf_styler_obj called")
     """
@@ -82,7 +179,7 @@ def generate_pdf_styler_obj(html_content, user_obj=None):
         "lt_spacing": "2px",
         "margin": "1cm",
         "bg_color": "#000134",
-        "font_size": "36px",
+        "font_size": "20px",
         "html_content": html_content,
         "output_filename": pdf_name,
         "text_color": "brown"
@@ -93,6 +190,9 @@ def generate_pdf_styler_obj(html_content, user_obj=None):
         obj["font_size"] = str(user_obj["font_size"]) + "px"
         obj["text_color"] = user_obj["text_color"]
         obj["bg_color"] = user_obj["background_color"]
+        obj["span_color"] = user_obj["span_color"]
+        obj["font_family"] = user_obj["font_family"]
+        # print(f"general obj = {str(obj)}")
 
     return obj
 
@@ -116,14 +216,17 @@ async def code_to_pdf(obj):
         color: {obj["text_color"]};
         white-space: pre-wrap;
     }}
-    #zmc_header {{
-        font-size: 20px;
-        color: gold;
-    }}
     @page {{
         size: Letter;
         margin: {obj["margin"]};
-        background-color: {obj["bg_color"]};/* Add your desired gray color */
+        background-color: {obj["bg_color"]};
+    }}
+    p {{
+        color: {obj["text_color"]} !important;
+    }}
+    span {{
+        color: {obj["span_color"]};
+        font-weight: bold;
     }}
     """
 
@@ -187,7 +290,14 @@ def validate_pdf_request_data(obj):
             code = obj["text_color"]
             check = is_valid_hex_color(code)
             if not check:
+                print("\n\ntext color not found")
                 obj["text_color"] = "black"
+
+        if obj["span_color"]:
+            code = obj["span_color"]
+            check = is_valid_hex_color(code)
+            if not check:
+                obj["span_color"] = "lime"
 
         return obj
     except Exception as e:
@@ -206,7 +316,15 @@ def is_valid_hex_color(code):
     - bool: True if the string is a valid hex color code, False otherwise.
     """
     # Define the regular expression pattern for a valid hex color code
-    pattern = re.compile(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')
+    # pattern = re.compile(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')
+    pattern = re.compile(r'''
+        ^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$  # Hex format
+        |                                # OR
+        ^rgba?\(
+            \d{1,3},\s?\d{1,3},\s?\d{1,3}  # RGB format
+            (,\s?[0-1](\.\d{1,2})?)?       # Optional alpha channel
+        \)$
+    ''', re.VERBOSE)
 
     # Check if the provided code matches the pattern
     return bool(pattern.match(code))

@@ -225,7 +225,7 @@ async def index():
     """
     # Check if the user's account is locked.
     obj = check_lock_status()
-    # print(f"access obj = {str(obj)}")
+    print(f"access obj = {str(obj)}")
 
     if not obj["access"]:
         # Get the user stylings

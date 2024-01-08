@@ -216,11 +216,11 @@ h2 {
   transform: translateY(-50%);
 }
 .loading-dots {
-  left: 180px;
+  left: 220px;
 }
 .loading-dots2 {
   z-index: 25;
-  left: 270px;
+  left: 240px;
 }
 .loading-dots3 {
   left: 270px;
@@ -230,8 +230,8 @@ h2 {
 .loading-dot2,
 .loading-dot3 {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 10px;
+  height: 10px;
   margin: 0 4px;
   background-color: lime;/* var(--general-label-color);*/
   border-radius: 50%;

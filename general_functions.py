@@ -129,6 +129,7 @@ def lock_status(email):
 
         # Retrieve user from the database
         user = collection.find_one({"email": email})
+        print(str(user))
 
         # Define an object to hold the return data
         obj = {}
